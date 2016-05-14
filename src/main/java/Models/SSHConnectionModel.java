@@ -13,9 +13,19 @@ public class SSHConnectionModel {
     private String user;
     private String host;
     private int port;
-    private String keyPath;
     private String passphrase;    
 
+    public SSHConnectionModel() {
+    }
+
+    public SSHConnectionModel(String user, String host, int port, String passphrase) {
+        this.user = user;
+        this.host = host;
+        this.port = port;
+        this.passphrase = passphrase;
+    }
+
+    
     public String getUser() {
         return user;
     }
@@ -38,14 +48,6 @@ public class SSHConnectionModel {
 
     public void setPort(int port) {
         this.port = port;
-    }
-
-    public String getKeyPath() {
-        return keyPath;
-    }
-
-    public void setKeyPath(String keyPath) {
-        this.keyPath = keyPath;
     }
 
     public String getPassphrase() {

@@ -17,11 +17,12 @@ public class SSHConnection implements IConnection{
         try{
             JSch jsch=new JSch();
             ReadConfig read = new ReadConfig();
-            String user = read.getConnctionProperties().getUser();
-            String host = read.getConnctionProperties().getHost();
-            int port = read.getConnctionProperties().getPort();
-            String keyPath = read.getConnctionProperties().getKeyPath();
-            String passphrase = read.getConnctionProperties().getPassphrase();
+            
+            String user = read.getConnectionProperties().get(0).getUser();;
+            String host = read.getConnectionProperties().get(0).getHost();
+            int port = read.getConnectionProperties().get(0).getPort();
+            String passphrase = read.getConnectionProperties().get(0).getPassphrase();
+            String keyPath = read.getConfigProperties().getKeyPath();
             
             jsch.addIdentity(keyPath, passphrase);
 
