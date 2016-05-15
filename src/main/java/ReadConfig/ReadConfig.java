@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
  *
  * @author ivan
  */
-public class ReadConfig {
+public class ReadConfig implements IRead{
     ArrayList<SSHConnectionModel> connectionData = new ArrayList<SSHConnectionModel>();
     ConfigModel confData = new ConfigModel();
     InputStream inputStream;

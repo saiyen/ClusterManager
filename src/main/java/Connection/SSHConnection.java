@@ -5,50 +5,63 @@
  */
 package Connection;
 
+import Models.SSHConnectionModel;
 import ReadConfig.ReadConfig;
 import com.jcraft.jsch.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 /**
  *
  * @author ivan
  */
 public class SSHConnection implements IConnection{
+    HashMap<String, Session> listOfSessions = new HashMap<>();
+    
     public void AuthPublicKey() {
         try{
             JSch jsch=new JSch();
             ReadConfig read = new ReadConfig();
-            
-            String user = read.getConnectionProperties().get(0).getUser();;
-            String host = read.getConnectionProperties().get(0).getHost();
-            int port = read.getConnectionProperties().get(0).getPort();
-            String passphrase = read.getConnectionProperties().get(0).getPassphrase();
+            ArrayList<SSHConnectionModel> connections = read.getConnectionProperties();
+
             String keyPath = read.getConfigProperties().getKeyPath();
-            
-            jsch.addIdentity(keyPath, passphrase);
 
-            Session session=jsch.getSession(user, host, port);
+            for (SSHConnectionModel item : connections) {
+                jsch.addIdentity(keyPath, item.getPassphrase());
 
-            //Unsecure needs to add into known hosts
-            //http://serverfault.com/questions/321167/add-correct-host-key-in-known-hosts-multiple-ssh-host-keys-per-hostname
-            //TODO: if statment to check if the host is known
-            java.util.Properties config = new java.util.Properties(); 
-            config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
+                Session session=jsch.getSession(item.getUser(), item.getHost(), item.getPort());
 
-            session.connect();
+                //Unsecure needs to add into known hosts
+                //http://serverfault.com/questions/321167/add-correct-host-key-in-known-hosts-multiple-ssh-host-keys-per-hostname
+                //TODO: if statment to check if the host is known
+                java.util.Properties config = new java.util.Properties(); 
+                config.put("StrictHostKeyChecking", "no");
+                session.setConfig(config);
 
+                //Add all session into a list
+                listOfSessions.put(item.getHost(), session);
+
+                session.connect();
+            }
+        }
+        catch(Exception e){
+          System.out.println(e);
+        } 
+    }
+    
+    public void ExecCommand(String host, String command) throws IOException, JSchException{
+        Session session = listOfSessions.get(host);
+        
+        if(session == null) {
+            System.out.println("Can not find session for host: " + host);
+        } else {
             Channel channel=session.openChannel("exec");
-            //For more command use n\
-            ((ChannelExec)channel).setCommand("ping -c 1 google.com");
+
+            ((ChannelExec)channel).setCommand(command);
 
             channel.setInputStream(null);
             ((ChannelExec)channel).setErrStream(System.err);
             InputStream in=channel.getInputStream();
-
-        //        Channel channel=session.openChannel("shell");
-        //
-        //        channel.setInputStream(System.in);
-        //        channel.setOutputStream(System.out);
 
             channel.connect();
             byte[] tmp=new byte[1024];
@@ -65,11 +78,9 @@ public class SSHConnection implements IConnection{
               }
               try{Thread.sleep(1000);}catch(Exception ee){}
             }
+
             channel.disconnect();
             session.disconnect();
         }
-        catch(Exception e){
-          System.out.println(e);
-        } 
     }
 }
