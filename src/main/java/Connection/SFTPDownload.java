@@ -6,20 +6,20 @@ import net.schmizz.sshj.xfer.FileSystemFile;
 
 import java.io.IOException;
 
-/** This example demonstrates downloading of a file over SFTP from the SSH server. */
 public class SFTPDownload extends SSHConnection{
-
-    public void DownloadFile(String Hostname, String ContainerID) throws IOException {
+    SSHConnection connection = new SSHConnection();
+    
+    public void DownloadFile(String hostname, String fileName) throws IOException {
+        SSHClient targetHost = connection.getListOfClients().get(hostname);
         try {
-            setSSHClient(Hostname);
-            final SFTPClient sftp = getSSHClient().newSFTPClient();
+            final SFTPClient sftp = targetHost.newSFTPClient();
             try {
-                sftp.get ("/root/"+ContainerID+".tar", new FileSystemFile("C:\\Users\\chill\\Desktop\\"));
+                sftp.get ("/root/"+fileName+".tar", new FileSystemFile("C:\\Users\\chill\\Desktop\\"));
             } finally {
                 sftp.close();
             }
         } finally {
-            disconnectSSHClient();
+            targetHost.disconnect();
         }
     }
 
