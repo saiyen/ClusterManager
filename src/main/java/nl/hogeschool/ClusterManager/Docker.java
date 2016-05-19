@@ -3,31 +3,29 @@ package nl.hogeschool.ClusterManager;
 import Connection.Execute;
 import Connection.SFTPDownload;
 import Connection.SFTPUpload;
+import java.io.IOException;
 
 public class Docker {
 
-    static String executeCommand;
-
-    public static void startContainer(Container container) {
-        // Execute Start Container command on server
-        
-        executeCommand = "docker start " + container.getContainerID();
-        System.out.println(executeCommand);
+    public static void startContainer(Container container, String hostname) throws IOException {
+        Execute execute = new Execute(); 
+        execute.ExecuteCommand(hostname, "docker start "+container.getContainerID());
     }
 
-    public static void stopContainer(Container container) {
-        // Execute Stop Container command on server
-            
-        executeCommand = "docker stop " + container.getContainerID();
+    public static void stopContainer(Container container, String hostname) throws IOException {
+        Execute execute = new Execute(); 
+        execute.ExecuteCommand(hostname, "docker stop "+container.getContainerID());
     }
     
-    public static void moveContainer(Container container) {
-        // Execute Move Container command on server
-        SFTPUpload fileUploader = new SFTPUpload();
+    public static void moveContainer(Container container, String sourceHost, String destinationHost) throws IOException {
         SFTPDownload fileDownloader = new SFTPDownload();
-        
-        executeCommand = "docker export --output=\""+container.getContainerID()+".tar\""+container.getContainerID();
-        
+        SFTPUpload fileUploader = new SFTPUpload();
+
         Execute execute = new Execute(); 
+        execute.ExecuteCommand(sourceHost, "docker export "+container.getContainerID()+" > "+container.getContainerID()+".tar");
+        execute.ExecuteCommand(sourceHost, "chmod 700 "+container.getContainerID()+".tar");
+        
+        fileDownloader.DownloadFile(sourceHost, container.getContainerID());
+        fileUploader.UploadFile(destinationHost, container.getContainerID());
     }
 }

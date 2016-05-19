@@ -7,12 +7,12 @@ import static net.schmizz.sshj.common.IOUtils.readFully;
 
 public class Execute extends SSHConnection {
 
-    public void ExecuteCommand() throws IOException {
+    public void ExecuteCommand(String Hostname, String Command) throws IOException {
         try {
-            setSSHClient();
+            setSSHClient(Hostname);
             startSession();                
             try {
-                final Command cmd = session.exec("docker ps -a");
+                final Command cmd = session.exec(Command);
                 System.out.println(readFully(cmd.getInputStream()).toString());
             } finally {
                 endSession();

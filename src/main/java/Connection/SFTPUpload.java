@@ -7,14 +7,14 @@ import net.schmizz.sshj.xfer.FileSystemFile;
 
 public class SFTPUpload extends SSHConnection{
 
-    public void SFTPUpload() throws IOException {
+    public void UploadFile(String destinationHost, String ContainerID) throws IOException {
         try {     
-            setSSHClient();
+            setSSHClient(destinationHost);
                     
-	    final String src = "C:\\Users\\User\\Desktop\\" + File.separator + "datascience.txt";
+	    final String src = "C:\\Users\\chill\\Desktop\\" + File.separator + ContainerID+".tar";
             final SFTPClient sftp = getSSHClient().newSFTPClient();
             try {
-                sftp.put(new FileSystemFile(src), "/testFolder");
+                sftp.put(new FileSystemFile(src), "/tmp/saiyen/");
             } finally {
                 sftp.close();
             }

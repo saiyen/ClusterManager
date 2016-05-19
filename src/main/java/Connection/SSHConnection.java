@@ -11,13 +11,13 @@ public abstract class SSHConnection {
     private SSHClient sshClient;
     protected Session session;
     
-    public void setSSHClient() throws IOException{
+    public void setSSHClient(String hostname) throws IOException{
         sshClient = new SSHClient();
         sshClient.loadKnownHosts();
-        sshClient.connect("HostName");
+        sshClient.connect(hostname);
         
-        KeyProvider loadKey = sshClient.loadKeys("Key");
-        sshClient.authPublickey("root",loadKey);
+        KeyProvider loadKey = sshClient.loadKeys("","");
+        sshClient.authPublickey("",loadKey);
     }
     
     public SSHClient getSSHClient(){

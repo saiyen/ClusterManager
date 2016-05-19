@@ -9,12 +9,12 @@ import java.io.IOException;
 /** This example demonstrates downloading of a file over SFTP from the SSH server. */
 public class SFTPDownload extends SSHConnection{
 
-    public void DownloadFile() throws IOException {
+    public void DownloadFile(String Hostname, String ContainerID) throws IOException {
         try {
-            setSSHClient();
+            setSSHClient(Hostname);
             final SFTPClient sftp = getSSHClient().newSFTPClient();
             try {
-                sftp.get ("/root/hello-world-test.tar", new FileSystemFile("C:\\Users\\chill\\Desktop\\"));
+                sftp.get ("/root/"+ContainerID+".tar", new FileSystemFile("C:\\Users\\chill\\Desktop\\"));
             } finally {
                 sftp.close();
             }
