@@ -9,12 +9,12 @@ public class Docker {
 
     public static void startContainer(Container container, String hostname) throws IOException {
         Execute execute = new Execute(); 
-        execute.ExecuteCommand(hostname, "docker start "+container.getContainerID());
+        execute.executeCommand(hostname, "docker start "+container.getContainerID());
     }
 
     public static void stopContainer(Container container, String hostname) throws IOException {
         Execute execute = new Execute(); 
-        execute.ExecuteCommand(hostname, "docker stop "+container.getContainerID());
+        execute.executeCommand(hostname, "docker stop "+container.getContainerID());
     }
     
     public static void moveContainer(Container container, String sourceHost, String destinationHost) throws IOException {
@@ -22,10 +22,10 @@ public class Docker {
         SFTPUpload fileUploader = new SFTPUpload();
 
         Execute execute = new Execute(); 
-        execute.ExecuteCommand(sourceHost, "docker export "+container.getContainerID()+" > "+container.getContainerID()+".tar");
-        execute.ExecuteCommand(sourceHost, "chmod 700 "+container.getContainerID()+".tar");
+        execute.executeCommand(sourceHost, "docker export "+container.getContainerID()+" > "+container.getContainerID()+".tar");
+        execute.executeCommand(sourceHost, "chmod 700 "+container.getContainerID()+".tar");
         
-        fileDownloader.DownloadFile(sourceHost, container.getContainerID());
-        fileUploader.UploadFile(destinationHost, container.getContainerID());
+        fileDownloader.downloadFile(sourceHost, container.getContainerID());
+        fileUploader.uploadFile(destinationHost, container.getContainerID());
     }
 }

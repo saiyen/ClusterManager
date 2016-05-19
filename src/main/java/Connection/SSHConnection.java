@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.connection.ConnectionException;
-import net.schmizz.sshj.connection.channel.direct.Session;
-import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
 public class SSHConnection implements IConnection{
@@ -19,7 +16,7 @@ public class SSHConnection implements IConnection{
         ReadConfig read = new ReadConfig();
         ArrayList<SSHConnectionModel> connections = read.getConnectionProperties();
         
-        String keyPath = read.getConfigProperties().getKeyPath();
+        String keyPath = ReadConfig.confData.getKeyPath();
 
         for (SSHConnectionModel currentConnection : connections) {
             sshConnection = new SSHClient();

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -26,12 +27,12 @@ import org.w3c.dom.Element;
  */
 public class ReadConfig implements IRead{
     ArrayList<SSHConnectionModel> connectionData = new ArrayList<SSHConnectionModel>();
-    ConfigModel confData = new ConfigModel();
+    public static ConfigModel confData = new ConfigModel();
     InputStream inputStream;
     
     public ArrayList<SSHConnectionModel> getConnectionProperties() {
         try {	
-         File inputFile = new File("/home/ivan/NetBeansProjects/ClusterManager/src/main/resources/ConnectionsConfig.xml");
+         File inputFile = new File("./src/main/resources/ConnectionsConfig.xml");
          DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
          DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
          Document doc = dBuilder.parse(inputFile);
@@ -57,7 +58,7 @@ public class ReadConfig implements IRead{
         return connectionData;
     }
     
-    public ConfigModel getConfigProperties() throws IOException {
+    public void getConfigProperties() throws IOException {
         try {
             Properties prop = new Properties();
             String propFileNeme = "Config.properties";
@@ -71,12 +72,12 @@ public class ReadConfig implements IRead{
             }
             
             confData.setKeyPath(prop.getProperty("pKeyPath"));
+            confData.setDownloadFolderPath(prop.getProperty("downloadPath"));
             
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         } finally {
             inputStream.close();
         }
-        return confData;
     }
 }
