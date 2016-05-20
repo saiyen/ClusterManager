@@ -6,14 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.connection.ConnectionException;
-import net.schmizz.sshj.connection.channel.direct.Session;
-import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
 public class SSHConnection implements IConnection{
     private SSHClient sshConnection;
-    private HashMap<String, SSHClient> listOfClients = new HashMap<>();
+    private static HashMap<String, SSHClient> listOfClients = new HashMap<>();
     
     public void makeConnection() throws IOException {
         ReadConfig read = new ReadConfig();
@@ -33,8 +30,8 @@ public class SSHConnection implements IConnection{
         }
     }
     
-    public HashMap<String, SSHClient> getListOfClients() {
-            return this.listOfClients;
+    static public HashMap<String, SSHClient> getListOfClients() {
+            return SSHConnection.listOfClients;
     }
 
 }

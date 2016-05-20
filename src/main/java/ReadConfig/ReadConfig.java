@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -31,7 +32,7 @@ public class ReadConfig implements IRead{
     
     public ArrayList<SSHConnectionModel> getConnectionProperties() {
         try {	
-         File inputFile = new File("/home/ivan/NetBeansProjects/ClusterManager/src/main/resources/ConnectionsConfig.xml");
+         File inputFile = new File("./src/main/resources/ConnectionsConfig.xml");
          DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
          DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
          Document doc = dBuilder.parse(inputFile);
