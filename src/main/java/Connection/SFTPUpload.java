@@ -6,11 +6,10 @@ import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.xfer.FileSystemFile;
 
-public class SFTPUpload extends SSHConnection{
-    SSHConnection connection = new SSHConnection();
+public class SFTPUpload {
     
     public void UploadFile(String destinationHost, String fileName) throws IOException {
-        SSHClient targetHost = connection.getListOfClients().get(destinationHost);
+        SSHClient targetHost = SSHConnection.getListOfClients().get(destinationHost);
         
         try {                         
 	    final String src = "C:\\Users\\chill\\Desktop\\" + File.separator + fileName+".tar";

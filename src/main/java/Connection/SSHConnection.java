@@ -9,16 +9,15 @@ import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
 public class SSHConnection implements IConnection{
-    private SSHClient sshConnection;
     private static HashMap<String, SSHClient> listOfClients = new HashMap<>();
     
-    public void makeConnection() throws IOException {
+    public static void makeConnections() throws IOException {
         ReadConfig read = new ReadConfig();
         ArrayList<SSHConnectionModel> connections = read.getConnectionProperties();
-        
         String keyPath = read.getConfigProperties().getKeyPath();
 
         for (SSHConnectionModel currentConnection : connections) {
+            SSHClient sshConnection;
             sshConnection = new SSHClient();
             sshConnection.loadKnownHosts();
             sshConnection.connect(currentConnection.getHost());
@@ -30,8 +29,11 @@ public class SSHConnection implements IConnection{
         }
     }
     
-    static public HashMap<String, SSHClient> getListOfClients() {
-            return SSHConnection.listOfClients;
+    public static HashMap<String, SSHClient> getListOfClients() throws IOException {
+        if(listOfClients.isEmpty())
+            makeConnections();
+        
+            return listOfClients;
     }
 
 }

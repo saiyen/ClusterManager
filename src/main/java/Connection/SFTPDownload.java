@@ -6,11 +6,10 @@ import net.schmizz.sshj.xfer.FileSystemFile;
 
 import java.io.IOException;
 
-public class SFTPDownload extends SSHConnection{
-    SSHConnection connection = new SSHConnection();
+public class SFTPDownload {
     
     public void DownloadFile(String hostname, String fileName) throws IOException {
-        SSHClient targetHost = connection.getListOfClients().get(hostname);
+        SSHClient targetHost = SSHConnection.getListOfClients().get(hostname);
         try {
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
@@ -22,5 +21,4 @@ public class SFTPDownload extends SSHConnection{
             targetHost.disconnect();
         }
     }
-
 }

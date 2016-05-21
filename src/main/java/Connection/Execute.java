@@ -5,15 +5,13 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import java.io.IOException;
 import java.io.InputStream;
 import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.common.IOUtils;
 import net.schmizz.sshj.connection.channel.direct.Session;
 
-public class Execute extends SSHConnection {
-    SSHConnection connection = new SSHConnection();
+public class Execute {
     private Command cmd;
     
     public InputStream executeCommand(String hostname, String command) throws IOException {
-        SSHClient currentHost = connection.getListOfClients().get(hostname);
+        SSHClient currentHost = SSHConnection.getListOfClients().get(hostname);
         
         try {
             Session session = currentHost.startSession();
