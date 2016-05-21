@@ -14,7 +14,7 @@ public class SSHConnection implements IConnection{
     public static void makeConnections() throws IOException {
         ReadConfig read = new ReadConfig();
         ArrayList<SSHConnectionModel> connections = read.getConnectionProperties();
-        String keyPath = read.getConfigProperties().getKeyPath();
+        String keyPath = ReadConfig.confData.getKeyPath();
 
         for (SSHConnectionModel currentConnection : connections) {
             SSHClient sshConnection;

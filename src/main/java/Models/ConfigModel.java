@@ -11,6 +11,7 @@ package Models;
  */
 public class ConfigModel {
     private String keyPath;
+    private String downloadFolderPath;
 
     public String getKeyPath() {
         return keyPath;
@@ -19,6 +20,16 @@ public class ConfigModel {
     public void setKeyPath(String keyPath) {
         this.keyPath = keyPath;
     }
+
+    public String getDownloadFolderPath() {
+        return downloadFolderPath;
+    }
+
+    public void setDownloadFolderPath(String downloadFolderPath) {
+        this.downloadFolderPath = downloadFolderPath;
+    }
+    
+    
     
     
 }

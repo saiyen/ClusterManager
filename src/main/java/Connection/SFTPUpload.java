@@ -5,14 +5,16 @@ import java.io.IOException;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.xfer.FileSystemFile;
+import ReadConfig.ReadConfig;
 
 public class SFTPUpload {
     
-    public void UploadFile(String destinationHost, String fileName) throws IOException {
+    public void uploadFile(String destinationHost, String fileName) throws IOException {
         SSHClient targetHost = SSHConnection.getListOfClients().get(destinationHost);
+        String downloadPath = ReadConfig.confData.getDownloadFolderPath();
         
         try {                         
-	    final String src = "C:\\Users\\chill\\Desktop\\" + File.separator + fileName+".tar";
+	    final String src = downloadPath + File.separator + fileName+".tar";
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
                 sftp.put(new FileSystemFile(src), "/tmp/saiyen/");

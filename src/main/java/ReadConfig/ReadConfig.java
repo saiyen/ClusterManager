@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -27,7 +26,7 @@ import org.w3c.dom.Element;
  */
 public class ReadConfig implements IRead{
     ArrayList<SSHConnectionModel> connectionData = new ArrayList<SSHConnectionModel>();
-    ConfigModel confData = new ConfigModel();
+    public static ConfigModel confData = new ConfigModel();
     InputStream inputStream;
     
     public ArrayList<SSHConnectionModel> getConnectionProperties() {
@@ -58,7 +57,7 @@ public class ReadConfig implements IRead{
         return connectionData;
     }
     
-    public ConfigModel getConfigProperties() throws IOException {
+    public void getConfigProperties() throws IOException {
         try {
             Properties prop = new Properties();
             String propFileNeme = "Config.properties";
@@ -72,12 +71,12 @@ public class ReadConfig implements IRead{
             }
             
             confData.setKeyPath(prop.getProperty("pKeyPath"));
+            confData.setDownloadFolderPath(prop.getProperty("downloadFolder"));
             
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         } finally {
             inputStream.close();
         }
-        return confData;
     }
 }
