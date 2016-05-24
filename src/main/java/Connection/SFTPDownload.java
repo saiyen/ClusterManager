@@ -1,18 +1,19 @@
 package Connection;
 
+import ReadConfig.ReadConfig;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.xfer.FileSystemFile;
-import ReadConfig.ReadConfig;
 
 import java.io.IOException;
 
 public class SFTPDownload {
+    SSHConnection connection = new SSHConnection();
     
     public void downloadFile(String hostname, String fileName) throws IOException {
         SSHClient targetHost = SSHConnection.getListOfClients().get(hostname);
         String downloadPath = ReadConfig.confData.getDownloadFolderPath();
-        
+
         try {
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
@@ -20,8 +21,11 @@ public class SFTPDownload {
             } finally {
                 sftp.close();
             }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
         } finally {
             targetHost.disconnect();
         }
     }
+
 }

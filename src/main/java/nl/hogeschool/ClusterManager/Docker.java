@@ -1,62 +1,73 @@
 package nl.hogeschool.ClusterManager;
 
+import Models.ServerModel;
+import Models.ContainerModel;
 import Connection.Execute;
 import Connection.SFTPDownload;
 import Connection.SFTPUpload;
 import Connection.SSHConnection;
-import java.io.BufferedReader;
+import Connection.StreamReader;
+import com.google.gson.JsonObject;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import net.schmizz.sshj.SSHClient;
 
 public class Docker {
-    List<Container> listOfContainers = new ArrayList();
 
-    public static void startContainer(Container container, String hostname) throws IOException {
-        Execute execute = new Execute(); 
-        execute.executeCommand(hostname, "docker start "+container.getContainerID());
+    private static String server_IP;
+    private static String container_ID;
+    private static String destination_IP;
+    private static List<ServerModel> listOfServersWithContainers = StreamReader.servers;
+
+    public static void startContainer(JsonObject container) throws IOException {
+        container_ID = container.get("id").getAsString();
+        server_IP = getServerIPFromContainerID(container_ID);
+        Execute execute = new Execute();
+        execute.executeCommand(server_IP, "docker start " + container_ID, "Docker start");
     }
 
-    public static void stopContainer(Container container, String hostname) throws IOException {
-        Execute execute = new Execute(); 
-        execute.executeCommand(hostname, "docker stop "+container.getContainerID());
+    public static void stopContainer(JsonObject container) throws IOException {
+        container_ID = container.get("id").getAsString();
+        server_IP = getServerIPFromContainerID(container_ID);
+        Execute execute = new Execute();
+        execute.executeCommand(server_IP, "docker stop " + container_ID, "Docker stop");
     }
-    
-    public static void moveContainer(Container container, String sourceHost, String destinationHost) throws IOException {
+
+    public static void moveContainer(JsonObject container) throws IOException {
+        container_ID = container.get("id").getAsString();
+        server_IP = getServerIPFromContainerID(container_ID);
+        destination_IP = container.get("extra").getAsString();
         SFTPDownload fileDownloader = new SFTPDownload();
         SFTPUpload fileUploader = new SFTPUpload();
 
-        Execute execute = new Execute(); 
-        execute.executeCommand(sourceHost, "docker export "+container.getContainerID()+" > "+container.getContainerID()+".tar");
-        execute.executeCommand(sourceHost, "chmod 700 "+container.getContainerID()+".tar");
-        
-        fileDownloader.downloadFile(sourceHost, container.getContainerID());
-        fileUploader.uploadFile(destinationHost, container.getContainerID());
-    }
-    
-    public static void getAllContainers() throws IOException, InterruptedException {
-        HashMap<String,SSHClient> listOfClients = SSHConnection.getListOfClients();
-        
-        for(Entry<String, SSHClient> client : listOfClients.entrySet()) {
-            Execute execute = new Execute(); 
-            InputStream CMD = execute.executeCommand(client.getKey(), "docker ps -a");
-            BufferedReader r = new BufferedReader(new InputStreamReader(CMD));
-            System.out.println("Docker ps -a is uitgevoerd op de volgende server: "+ client.getKey());
-            
-            // Read the output given by the execute command per line
-                while (r.readLine() != null) {
-                    System.out.println(r.readLine());
-                                System.in.read();
-                }  
-                
-            // Divide each line per , or " " to split by Id, Name etc
+        Execute execute = new Execute();
+        //execute.executeCommand(server_IP, "docker export " + container_ID + " > " + container_ID + ".tar", "Docker move");
+        //execute.executeCommand(server_IP, "chmod 700 " + container_ID + ".tar", "setPermission");
 
-            // Create new Container object and assign these values
+        fileDownloader.downloadFile(server_IP, container_ID);
+        fileUploader.uploadFile(destination_IP, container_ID);
+    }
+
+    public static void getAllContainers() throws IOException, InterruptedException {
+        HashMap<String, SSHClient> listOfClients = SSHConnection.getListOfClients();
+
+        for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
+            Execute execute = new Execute();
+            execute.executeCommand(client.getKey(), "docker ps -a", "Docker getAllContainers");
+            System.out.println("Docker ps -a is uitgevoerd op de volgende server: " + client.getKey());
         }
+    }
+
+    public static String getServerIPFromContainerID(String containerID) {
+        for (ServerModel server : listOfServersWithContainers) {
+            for (ContainerModel container : server.getContainers()) {
+                if (container.getContainerID().contains(containerID)) {
+                    server_IP = server.getIPAddress();
+                }
+            }
+        }
+        return server_IP;
     }
 }

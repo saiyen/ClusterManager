@@ -1,11 +1,11 @@
 package Connection;
 
+import ReadConfig.ReadConfig;
 import java.io.File;
 import java.io.IOException;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.xfer.FileSystemFile;
-import ReadConfig.ReadConfig;
 
 public class SFTPUpload {
     

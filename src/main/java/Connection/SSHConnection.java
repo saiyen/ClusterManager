@@ -13,6 +13,7 @@ public class SSHConnection implements IConnection{
     
     public static void makeConnections() throws IOException {
         ReadConfig read = new ReadConfig();
+        read.getConfigProperties();
         ArrayList<SSHConnectionModel> connections = read.getConnectionProperties();
         String keyPath = ReadConfig.confData.getKeyPath();
 
