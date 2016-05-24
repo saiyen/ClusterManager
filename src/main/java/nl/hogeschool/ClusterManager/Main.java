@@ -1,5 +1,6 @@
 package nl.hogeschool.ClusterManager;
 
+import API.GETRequests;
 import Connection.SSHConnection;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,15 +12,19 @@ import java.io.FileReader;
 public class Main {
 
     public static void main(String[] Args) {
-        try {            
-            SSHConnection.makeConnections();
-
-            Docker.getAllContainers();
-            JsonObject container = getJSONObjectFromFile();
-            Docker.moveContainer(container);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+//        try {            
+//            SSHConnection.makeConnections();
+//
+//            Docker.getAllContainers();
+//            JsonObject container = getJSONObjectFromFile();
+//            Docker.moveContainer(container);
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+        
+        //For the test Sayien http://localhost:4567/hello
+        GETRequests hello = new GETRequests();
+        hello.getContainers();
     }
 
     public static JsonObject getJSONObjectFromFile() throws FileNotFoundException {
