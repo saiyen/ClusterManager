@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ReadConfig;
+package Interfaces;
 
 /**
  *
- * @author ivan
+ * @author Ivan Ivanov
  */
-public interface IRead {
+public interface IConnection {
     
 }

@@ -3,8 +3,7 @@ package nl.hogeschool.ClusterManager;
 import Models.ServerModel;
 import Models.ContainerModel;
 import Connection.Execute;
-import Connection.SFTPDownload;
-import Connection.SFTPUpload;
+import Connection.SFTPConnection;
 import Connection.SSHConnection;
 import Connection.StreamReader;
 import com.google.gson.JsonObject;
@@ -39,15 +38,14 @@ public class Docker {
         container_ID = container.get("id").getAsString();
         server_IP = getServerIPFromContainerID(container_ID);
         destination_IP = container.get("extra").getAsString();
-        SFTPDownload fileDownloader = new SFTPDownload();
-        SFTPUpload fileUploader = new SFTPUpload();
+        SFTPConnection sftpTransfer = new SFTPConnection();
 
         Execute execute = new Execute();
         //execute.executeCommand(server_IP, "docker export " + container_ID + " > " + container_ID + ".tar", "Docker move");
         //execute.executeCommand(server_IP, "chmod 700 " + container_ID + ".tar", "setPermission");
 
-        fileDownloader.downloadFile(server_IP, container_ID);
-        fileUploader.uploadFile(destination_IP, container_ID);
+        sftpTransfer.downloadFile(server_IP, container_ID);
+        sftpTransfer.uploadFile(destination_IP, container_ID);
     }
 
     public static void getAllContainers() throws IOException, InterruptedException {

@@ -5,6 +5,7 @@
  */
 package ReadConfig;
 
+import Interfaces.IRead;
 import Models.ConfigModel;
 import Models.SSHConnectionModel;
 import java.io.FileNotFoundException;

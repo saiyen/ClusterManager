@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import Models.ContainerModel;
 import Models.ServerModel;
@@ -72,7 +71,7 @@ public class StreamReader {
 
 
         //2. Convert object to JSON string and save into a file directly
-        try (FileWriter writer = new FileWriter("C:\\Users\\chill\\Desktop\\JSONObjects\\SENDToAPI\\Containers.json")) {
+        try (FileWriter writer = new FileWriter("./src/main/resources/Containers.json")) {
 
             gson.toJson(servers, writer);
 

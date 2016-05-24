@@ -1,5 +1,6 @@
 package Connection;
 
+import Interfaces.IConnection;
 import Models.SSHConnectionModel;
 import ReadConfig.ReadConfig;
 import java.io.IOException;
@@ -13,8 +14,9 @@ public class SSHConnection implements IConnection{
     
     public static void makeConnections() throws IOException {
         ReadConfig read = new ReadConfig();
-        read.getConfigProperties();
         ArrayList<SSHConnectionModel> connections = read.getConnectionProperties();
+        
+        read.getConfigProperties();
         String keyPath = ReadConfig.confData.getKeyPath();
 
         for (SSHConnectionModel currentConnection : connections) {
