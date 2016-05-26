@@ -12,23 +12,24 @@ import java.io.FileReader;
 public class Main {
 
     public static void main(String[] Args) {
-//        try {            
+    try {            
 //            SSHConnection.makeConnections();
 //
-//            Docker.getAllContainers();
-//            JsonObject container = getJSONObjectFromFile();
+       Docker.getAllContainers();
+JsonObject container = getJSONObjectFromFile();
 //            Docker.moveContainer(container);
 //        } catch (Exception e) {
 //            System.out.println(e.getMessage());
 //        }
         
         //For the test Sayien http://localhost:4567/hello
-        GETRequests hello = new GETRequests();
-        hello.getContainers();
-    }
-
-    public static JsonObject getJSONObjectFromFile() throws FileNotFoundException {
-        JsonReader reader = new JsonReader(new FileReader("C:\\Users\\chill\\Desktop\\JSONObjects\\GETFromAPI\\ContainersFromAPI.json"));
+//        GETRequests hello = new GETRequests();
+//        hello.getContainers();
+Docker.renameContainer(container);
+    }catch(Exception e){}
+}
+        public static JsonObject getJSONObjectFromFile() throws FileNotFoundException {
+        JsonReader reader = new JsonReader(new FileReader("C:\\Users\\denni\\Desktop\\ContainersFromAPI.json"));
 
         JsonElement JSONelement = new JsonParser().parse(reader);
         JsonObject jobject = JSONelement.getAsJsonObject();

@@ -47,6 +47,14 @@ public class Docker {
         sftpTransfer.downloadFile(server_IP, container_ID);
         sftpTransfer.uploadFile(destination_IP, container_ID);
     }
+    
+    public static void renameContainer(JsonObject container) throws IOException{
+        container_ID = container.get("id").getAsString();
+        server_IP = getServerIPFromContainerID(container_ID);
+        String newName = container.get("extra").getAsString();
+        Execute execute = new Execute();
+        execute.executeCommand(server_IP, "docker rename "+container_ID+" "+newName, "Docker rename"); 
+    }
 
     public static void getAllContainers() throws IOException, InterruptedException {
         HashMap<String, SSHClient> listOfClients = SSHConnection.getListOfClients();
