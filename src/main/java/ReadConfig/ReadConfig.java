@@ -71,8 +71,9 @@ public class ReadConfig implements IRead{
                 throw new FileNotFoundException("property file '" + propFileNeme + "' not fount in the classpath");
             }
             
-            confData.setKeyPath(prop.getProperty("pKeyPath"));
-            confData.setDownloadFolderPath(prop.getProperty("downloadFolder"));
+            confData.setKeyPath(prop.getProperty("private-key-path"));
+            confData.setKnownHostsPath(prop.getProperty("known-hosts-path"));
+            confData.setDownloadFolderPath(prop.getProperty("download-folder"));
             
         } catch (Exception e) {
             System.out.println("Exception: " + e);

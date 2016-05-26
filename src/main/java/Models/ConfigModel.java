@@ -12,6 +12,7 @@ package Models;
 public class ConfigModel {
     private String keyPath;
     private String downloadFolderPath;
+    private String knownHostsPath;
 
     public String getKeyPath() {
         return keyPath;
@@ -27,6 +28,14 @@ public class ConfigModel {
 
     public void setDownloadFolderPath(String downloadFolderPath) {
         this.downloadFolderPath = downloadFolderPath;
+    }
+
+    public String getKnownHostsPath() {
+        return knownHostsPath;
+    }
+
+    public void setKnownHostsPath(String knownHostsPath) {
+        this.knownHostsPath = knownHostsPath;
     }
     
     

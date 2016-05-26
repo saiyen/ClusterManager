@@ -71,7 +71,7 @@ public class StreamReader {
 
 
         //2. Convert object to JSON string and save into a file directly
-        try (FileWriter writer = new FileWriter("./src/main/resources/Containers.json")) {
+        try (FileWriter writer = new FileWriter("./src/main/resources/json/Containers.json")) {
 
             gson.toJson(servers, writer);
 

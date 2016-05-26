@@ -18,14 +18,14 @@ public class SSHConnection implements IConnection{
     public static void makeConnections() throws IOException {
         ReadConfig read = new ReadConfig();
         ArrayList<SSHConnectionModel> connections = read.getConnectionProperties();
-        
-        read.getConfigProperties();
+
         String keyPath = ReadConfig.confData.getKeyPath();
+        String knownHostsPath = ReadConfig.confData.getKnownHostsPath();
 
         for (SSHConnectionModel currentConnection : connections) {
             SSHClient sshConnection;
             sshConnection = new SSHClient();
-            sshConnection.loadKnownHosts();
+            sshConnection.loadKnownHosts(new File(knownHostsPath));
             
             try {
                 sshConnection.connect(currentConnection.getHost());
@@ -33,9 +33,9 @@ public class SSHConnection implements IConnection{
                 if (e.getDisconnectReason() == DisconnectReason.HOST_KEY_NOT_VERIFIABLE) {
                     String msg = e.getMessage();
                     String[] split = msg.split("`");
-                    String vc = split[3];
+                    String fingerPrint = split[3];
                     sshConnection = new SSHClient();
-                    sshConnection.addHostKeyVerifier(vc);
+                    sshConnection.addHostKeyVerifier(fingerPrint);
                     sshConnection.connect(currentConnection.getHost());
                 } else {
                     throw e;
