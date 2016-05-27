@@ -1,6 +1,5 @@
 package nl.hogeschool.ClusterManager;
 
-import API.GETRequests;
 import Connection.SSHConnection;
 import ReadConfig.ReadConfig;
 import com.google.gson.JsonElement;
@@ -16,18 +15,20 @@ public class Main {
         try {
             ReadConfig read = new ReadConfig();
             read.getConfigProperties();
-
             SSHConnection.makeConnections();
 
-            Docker.getAllContainers();
             JsonObject container = getJSONObjectFromFile();
-            Docker.moveContainer(container);
-            Docker.renameContainer(container);
+
+            IContainerRunner Docker = new Docker(container);
+            Docker.getAllContainers();
+            Docker.startContainer();
+//            Docker.moveContainer();
+//            Docker.renameContainer();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
-    
+
     public static JsonObject getJSONObjectFromFile() throws FileNotFoundException {
         JsonReader reader = new JsonReader(new FileReader(".\\src\\main\\resources\\json\\ContainersFromAPI.json"));
 

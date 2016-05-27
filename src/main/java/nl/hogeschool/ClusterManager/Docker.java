@@ -13,30 +13,37 @@ import java.util.List;
 import java.util.Map.Entry;
 import net.schmizz.sshj.SSHClient;
 
-public class Docker {
-
+public class Docker implements IContainerRunner {
     private static String server_IP;
     private static String container_ID;
     private static String destination_IP;
-    private static List<ServerModel> listOfServersWithContainers = StreamReader.servers;
+    private final JsonObject container;
+    private final List<ServerModel> listOfServersWithContainers = StreamReader.servers;
+    
+    public Docker(JsonObject container) {
+        this.container = container;
+    }
 
-    public static void startContainer(JsonObject container) throws IOException {
+    @Override
+    public void startContainer() throws IOException {
         container_ID = container.get("id").getAsString();
-        server_IP = getServerIPFromContainerID(container_ID);
+        server_IP = getIPFromContainerID(container_ID);
         Execute execute = new Execute();
         execute.executeCommand(server_IP, "docker start " + container_ID, "Docker start");
     }
 
-    public static void stopContainer(JsonObject container) throws IOException {
+    @Override
+    public void stopContainer() throws IOException {
         container_ID = container.get("id").getAsString();
-        server_IP = getServerIPFromContainerID(container_ID);
+        server_IP = getIPFromContainerID(container_ID);
         Execute execute = new Execute();
         execute.executeCommand(server_IP, "docker stop " + container_ID, "Docker stop");
     }
 
-    public static void moveContainer(JsonObject container) throws IOException {
+    @Override
+    public void moveContainer() throws IOException {
         container_ID = container.get("id").getAsString();
-        server_IP = getServerIPFromContainerID(container_ID);
+        server_IP = getIPFromContainerID(container_ID);
         destination_IP = container.get("extra").getAsString();
         SFTPConnection sftpTransfer = new SFTPConnection();
 
@@ -48,15 +55,17 @@ public class Docker {
         sftpTransfer.uploadFile(destination_IP, container_ID);
     }
     
-    public static void renameContainer(JsonObject container) throws IOException{
+    @Override
+    public void renameContainer() throws IOException{
         container_ID = container.get("id").getAsString();
-        server_IP = getServerIPFromContainerID(container_ID);
+        server_IP = getIPFromContainerID(container_ID);
         String newName = container.get("extra").getAsString();
         Execute execute = new Execute();
         execute.executeCommand(server_IP, "docker rename "+container_ID+" "+newName, "Docker rename"); 
     }
 
-    public static void getAllContainers() throws IOException, InterruptedException {
+    @Override
+    public void getAllContainers() throws IOException, InterruptedException {
         HashMap<String, SSHClient> listOfClients = SSHConnection.getListOfClients();
 
         for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
@@ -66,10 +75,10 @@ public class Docker {
         }
     }
 
-    public static String getServerIPFromContainerID(String containerID) {
+    public String getIPFromContainerID(String containerID) {
         for (ServerModel server : listOfServersWithContainers) {
-            for (ContainerModel container : server.getContainers()) {
-                if (container.getContainerID().contains(containerID)) {
+            for (ContainerModel theContainer : server.getContainers()) {
+                if (theContainer.getContainerID().contains(containerID)) {
                     server_IP = server.getIPAddress();
                 }
             }
