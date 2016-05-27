@@ -25,6 +25,12 @@ public class ExecuteCMD {
                     InputStream inputStreamOfCommand = session.exec(command).getInputStream();
                     // Read the executed command
                     CMDReader.addCmdToList(inputStreamOfCommand,ReturnOutput, server_IP);
+                } catch(Exception e) {
+                    LOGGER.warning(e.getMessage());
                 }
+            } 
+        } catch(Exception e) {
+            LOGGER.warning(e.getMessage());
+        } 
     }
 }
