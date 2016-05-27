@@ -12,15 +12,14 @@ import java.util.List;
 import Models.ContainerModel;
 import Models.ServerModel;
 
-public class StreamReader {
+public class CMDReader {
     public static List<ServerModel> servers = new ArrayList<>();
     public static List<ContainerModel> containers;
 
-    public static List<String> inputReaderToText(InputStream is, String returnOutput, String server_IP) throws IOException {
+    public static void addCmdToList(InputStream is, String returnOutput, String server_IP) throws IOException {
         containers = new ArrayList<>();
         Reader inputStreamReader = new InputStreamReader(is);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        List<String> lines = new ArrayList();
         String line;
 
         // Read the output given by the execute command per line
@@ -48,7 +47,7 @@ public class StreamReader {
                     containers.add(new ContainerModel(current_ID, current_name, current_status, current_image, current_containerType));       
                     
                     servers.add(new ServerModel(current_IP, containers));
-                    convertObjectsToJson(servers);
+                    //convertObjectsToJson(servers);
                 }
                 
                 System.out.println("Server " + servers.get(0).getIPAddress() + " has this much containers:\n" + servers.get(0).getContainers().get(0).getContainerName());
@@ -58,25 +57,6 @@ public class StreamReader {
                 break;
             default:
                 break;
-        }
-        return lines;
-    }
-    
-    public static void convertObjectsToJson(List<ServerModel> servers){
-        //1. Convert object to JSON string
-        Gson gson = new Gson();
-
-        String json = gson.toJson(servers);
-        System.out.println(json);
-
-
-        //2. Convert object to JSON string and save into a file directly
-        try (FileWriter writer = new FileWriter("./src/main/resources/json/Containers.json")) {
-
-            gson.toJson(servers, writer);
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

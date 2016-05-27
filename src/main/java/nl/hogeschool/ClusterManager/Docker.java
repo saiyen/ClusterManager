@@ -1,11 +1,12 @@
 package nl.hogeschool.ClusterManager;
 
+import Interfaces.IContainerRunner;
 import Models.ServerModel;
 import Models.ContainerModel;
-import Connection.Execute;
+import Connection.ExecuteCMD;
 import Connection.SFTPConnection;
 import Connection.SSHConnection;
-import Connection.StreamReader;
+import Connection.CMDReader;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,17 +19,18 @@ public class Docker implements IContainerRunner {
     private static String container_ID;
     private static String destination_IP;
     private final JsonObject container;
-    private final List<ServerModel> listOfServersWithContainers = StreamReader.servers;
+    private List<ServerModel> listOfServersWithContainers = CMDReader.servers;
     
-    public Docker(JsonObject container) {
+    public Docker(JsonObject container, List<ServerModel>listOfServersWithContainers) {
         this.container = container;
+        this.listOfServersWithContainers = listOfServersWithContainers;
     }
 
     @Override
     public void startContainer() throws IOException {
         container_ID = container.get("id").getAsString();
         server_IP = getIPFromContainerID(container_ID);
-        Execute execute = new Execute();
+        ExecuteCMD execute = new ExecuteCMD();
         execute.executeCommand(server_IP, "docker start " + container_ID, "Docker start");
     }
 
@@ -36,7 +38,7 @@ public class Docker implements IContainerRunner {
     public void stopContainer() throws IOException {
         container_ID = container.get("id").getAsString();
         server_IP = getIPFromContainerID(container_ID);
-        Execute execute = new Execute();
+        ExecuteCMD execute = new ExecuteCMD();
         execute.executeCommand(server_IP, "docker stop " + container_ID, "Docker stop");
     }
 
@@ -47,7 +49,7 @@ public class Docker implements IContainerRunner {
         destination_IP = container.get("extra").getAsString();
         SFTPConnection sftpTransfer = new SFTPConnection();
 
-        Execute execute = new Execute();
+        ExecuteCMD execute = new ExecuteCMD();
         //execute.executeCommand(server_IP, "docker export " + container_ID + " > " + container_ID + ".tar", "Docker move");
         //execute.executeCommand(server_IP, "chmod 700 " + container_ID + ".tar", "setPermission");
 
@@ -60,7 +62,7 @@ public class Docker implements IContainerRunner {
         container_ID = container.get("id").getAsString();
         server_IP = getIPFromContainerID(container_ID);
         String newName = container.get("extra").getAsString();
-        Execute execute = new Execute();
+        ExecuteCMD execute = new ExecuteCMD();
         execute.executeCommand(server_IP, "docker rename "+container_ID+" "+newName, "Docker rename"); 
     }
 
@@ -69,7 +71,7 @@ public class Docker implements IContainerRunner {
         HashMap<String, SSHClient> listOfClients = SSHConnection.getListOfClients();
 
         for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
-            Execute execute = new Execute();
+            ExecuteCMD execute = new ExecuteCMD();
             execute.executeCommand(client.getKey(), "docker ps -a", "Docker getAllContainers");
             System.out.println("Docker ps -a is uitgevoerd op de volgende server: " + client.getKey());
         }

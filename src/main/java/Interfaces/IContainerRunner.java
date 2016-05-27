@@ -1,4 +1,4 @@
-package nl.hogeschool.ClusterManager;
+package Interfaces;
 
 import java.io.IOException;
 
