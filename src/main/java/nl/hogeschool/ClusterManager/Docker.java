@@ -7,12 +7,12 @@ import Connection.ExecuteCMD;
 import Connection.SFTPConnection;
 import Connection.SSHConnection;
 import Connection.CMDReader;
+import Models.SSHClientWrapperModel;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import net.schmizz.sshj.SSHClient;
 
 public class Docker implements IContainerRunner {
     private static String server_IP;
@@ -66,11 +66,11 @@ public class Docker implements IContainerRunner {
         execute.executeCommand(server_IP, "docker rename "+container_ID+" "+newName, "Docker rename"); 
     }
 
-    @Override
-    public void getAllContainers() throws IOException, InterruptedException {
-        HashMap<String, SSHClient> listOfClients = SSHConnection.getListOfClients();
 
-        for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
+    public void getAllContainers() throws IOException, InterruptedException {
+        HashMap<String, SSHClientWrapperModel> listOfClients = SSHConnection.getListOfClients();
+
+        for (Entry<String, SSHClientWrapperModel> client : listOfClients.entrySet()) {
             ExecuteCMD execute = new ExecuteCMD();
             execute.executeCommand(client.getKey(), "docker ps -a", "Docker getAllContainers");
             System.out.println("Docker ps -a is uitgevoerd op de volgende server: " + client.getKey());

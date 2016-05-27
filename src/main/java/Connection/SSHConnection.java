@@ -1,19 +1,22 @@
 package Connection;
 
 import Interfaces.IConnection;
+import Models.SSHClientWrapperModel;
 import Models.SSHConnectionModel;
 import ReadConfig.ReadConfig;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.DisconnectReason;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
 public class SSHConnection implements IConnection{
-    private static HashMap<String, SSHClient> listOfClients = new HashMap<>();
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static HashMap<String, SSHClientWrapperModel> listOfClients = new HashMap<>();
     
     public static void makeConnections() throws IOException {
         ReadConfig read = new ReadConfig();
@@ -40,16 +43,19 @@ public class SSHConnection implements IConnection{
                 } else {
                     throw e;
                 }
+                
+                LOGGER.warning(e.getMessage());
             }
 
             KeyProvider loadKey = sshConnection.loadKeys(keyPath, currentConnection.getPassphrase());
             sshConnection.authPublickey(currentConnection.getUser(), loadKey);
+            LOGGER.info("Authenticated successfully");
             
-            listOfClients.put(currentConnection.getHost(), sshConnection);
+            listOfClients.put(currentConnection.getHost(), new SSHClientWrapperModel(sshConnection, sshConnection.startSession()));
         }
     }
     
-    public static HashMap<String, SSHClient> getListOfClients() throws IOException {
+    public static HashMap<String, SSHClientWrapperModel> getListOfClients() throws IOException {
         if(listOfClients.isEmpty())
             makeConnections();
         

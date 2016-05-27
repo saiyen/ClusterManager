@@ -2,8 +2,9 @@ package nl.hogeschool.ClusterManager;
 
 import Connection.CMDReader;
 import Interfaces.IContainerRunner;
-import Connection.SSHConnection;
 import Models.ServerModel;
+import Connection.SSHConnection;
+import Logger.MyLogger;
 import ReadConfig.ReadConfig;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,9 +15,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+
 public class Main {
 
     public static void main(String[] Args) {
+        
+        try {
+            MyLogger.setup();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Problems with creating the log files");
+        }
+        
         try {
             FileReader readFile = new FileReader(".\\src\\main\\resources\\json\\ContainersFromAPI.json");
             List<ServerModel>listOfServersWithContainers = CMDReader.servers;
@@ -35,6 +45,7 @@ public class Main {
         } catch (IOException | InterruptedException e) {
             System.out.println(e.getMessage());
         }
+        
     }
 
     public static JsonObject getJSONObjectFromFile() throws FileNotFoundException {
