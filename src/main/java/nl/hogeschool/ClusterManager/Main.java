@@ -1,6 +1,6 @@
 package nl.hogeschool.ClusterManager;
 
-import Connection.CMDReader;
+import Connection.CommandOutputReader;
 import Interfaces.IContainerRunner;
 import Models.ServerModel;
 import Connection.SSHConnection;
@@ -17,8 +17,8 @@ import java.util.List;
 
 
 public class Main {
-
-    public static void main(String[] Args) {
+    
+    public static void main(String[] Args) {   
         
         try {
             MyLogger.setup();
@@ -28,24 +28,22 @@ public class Main {
         }
         
         try {
-            FileReader readFile = new FileReader(".\\src\\main\\resources\\json\\ContainersFromAPI.json");
-            List<ServerModel>listOfServersWithContainers = CMDReader.servers;
             ReadConfig read = new ReadConfig();
             read.getConfigProperties();
             SSHConnection.makeConnections();
-
+            List<ServerModel> listOfServersWithContainers = CommandOutputReader.allServers;
             // Create a JSONObject from the file by calling the getFromAPI method that's defined in the Client class
-            JsonObject container = Client.getFromAPI("JSONObject", readFile);
-            // Create new Docker Object, the object gets a JSONObject which contains information about the container and a List of servers to get it's IP address
-            IContainerRunner Docker = new Docker(container, listOfServersWithContainers);
+            JsonObject container = getJSONObjectFromFile();
+            // Create new DockerManager Object, the object gets a JSONObject which contains information about the container and a List of servers to get it's IP address
+            IContainerRunner Docker = new DockerManager(container);
             // Get each server with their containers to the server
             Docker.getAllContainers();
+            Docker.startContainer();
             // Send each server with their containers to the server
             Client.sendToAPI("JSONObject", listOfServersWithContainers);
         } catch (IOException | InterruptedException e) {
             System.out.println(e.getMessage());
-        }
-        
+        } 
     }
 
     public static JsonObject getJSONObjectFromFile() throws FileNotFoundException {
