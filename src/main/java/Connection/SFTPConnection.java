@@ -19,7 +19,7 @@ public class SFTPConnection {
         try {
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
-                sftp.get ("/root/"+fileName+".tar", new FileSystemFile(downloadPath));
+                sftp.get("/root/"+fileName+".tar", new FileSystemFile(downloadPath));
                 LOGGER.info("The file was successfully downloaded");
             } catch(Exception e) {
                 LOGGER.warning("The file was not downloaded because: " + e.getMessage());
@@ -41,7 +41,7 @@ public class SFTPConnection {
 	    final String src = downloadPath + File.separator + fileName+".tar";
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
-                sftp.put(new FileSystemFile(src), "/tmp/saiyen/");
+                sftp.put(new FileSystemFile(src), "/home/ubuntu-0862420/DockerContainers/");
                 LOGGER.info("The file was successfully downloaded");
             } catch(Exception e) {
                 LOGGER.warning("The file was not uploaded because: " + e.getMessage());
