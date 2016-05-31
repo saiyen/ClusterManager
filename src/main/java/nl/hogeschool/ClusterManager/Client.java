@@ -6,27 +6,20 @@ import java.io.FileReader;
 import java.util.List;
 
 public class Client {
-    private static DataFormatContext dataFormatContext = new DataFormatContext();
+    private static final DataFormatConverter dataFormatContext = new DataFormatConverter();
     
     public static void sendToAPI(String strategy, List<ServerModel> servers) {      
         // Context is set by preferences
-        checkStrategy(strategy);
+        chooseDataFormatStrategy(strategy);
 
         //get the json object of each Server and their containers
-        dataFormatContext.formatData(servers);
+        dataFormatContext.useStrategyToFormatData(servers);
     }
     
-    public static JsonObject getFromAPI(String strategy, FileReader readFile) {      
-        // Context is set by preferences
-        checkStrategy(strategy);
-        
-        return dataFormatContext.getFormattedData(readFile);
-    }
-    
-    public static DataFormatContext checkStrategy(String strategy){
+    public static DataFormatConverter chooseDataFormatStrategy(String strategy){
         switch(strategy){
             case "JSONObject":
-                dataFormatContext.setCompressionStrategy(new JsonStrategy());
+                dataFormatContext.setDataFormatStrategy(new JsonConverter());
                 break;        
         }
         return dataFormatContext;

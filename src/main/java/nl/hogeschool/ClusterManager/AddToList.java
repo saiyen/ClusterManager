@@ -1,4 +1,4 @@
-package Connection;
+package nl.hogeschool.ClusterManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,14 +10,14 @@ import java.util.List;
 import Models.ContainerModel;
 import Models.ServerModel;
 
-public class CommandOutputReader {
+public class AddToList {
 
     public static List<ServerModel> allServers = new ArrayList<>();
     public static List<ContainerModel> containers;
 
-    public static void addOutputToList(InputStream is, String containerEngineType, String server_IP) throws IOException {
+    public static void addOutputToList(InputStream resultOfAllServers, String server_IP, String containerEngineType) throws IOException {
         containers = new ArrayList<>();
-        Reader inputStreamReader = new InputStreamReader(is);
+        Reader inputStreamReader = new InputStreamReader(resultOfAllServers);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
         String line;
 
@@ -39,7 +39,6 @@ public class CommandOutputReader {
 
             // Save these values in the class Server which has all the containers
             containers.add(new ContainerModel(current_ID, current_name, current_status, current_image, current_containerType));
-
             allServers.add(new ServerModel(current_IP, containers));
 
             System.out.println("Container " + containers.toString() + " has been added to the server: " + current_IP);

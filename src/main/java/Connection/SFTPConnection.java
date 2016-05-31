@@ -11,15 +11,15 @@ import java.util.logging.Logger;
 
 public class SFTPConnection {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    String downloadPath = ReadConfig.confData.getDownloadFolderPath();
     
     public void downloadFile(String hostname, String fileName) throws IOException {
         SSHClient targetHost = SSHConnection.getListOfClients().get(hostname).getClient();
-        String downloadPath = ReadConfig.confData.getDownloadFolderPath();
 
         try {
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
-                sftp.get("/root/"+fileName+".tar", new FileSystemFile(downloadPath));
+                sftp.get("/home/DockerContainers/"+fileName+".tar", new FileSystemFile(downloadPath));
                 LOGGER.info("The file was successfully downloaded");
             } catch(Exception e) {
                 LOGGER.warning("The file was not downloaded because: " + e.getMessage());
@@ -33,15 +33,14 @@ public class SFTPConnection {
         } 
     }
     
-    public void uploadFile(String destinationHost, String fileName) throws IOException {
+    public void uploadFile(String destinationHost,String fileName) throws IOException {
         SSHClient targetHost = SSHConnection.getListOfClients().get(destinationHost).getClient();
-        String downloadPath = ReadConfig.confData.getDownloadFolderPath();
-        
+        String uploadPath = ReadConfig.confData.getUploadFolderPath();
         try {                         
 	    final String src = downloadPath + File.separator + fileName+".tar";
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
-                sftp.put(new FileSystemFile(src), "/home/ubuntu-0862420/DockerContainers/");
+                sftp.put(new FileSystemFile(src), uploadPath);
                 LOGGER.info("The file was successfully downloaded");
             } catch(Exception e) {
                 LOGGER.warning("The file was not uploaded because: " + e.getMessage());
