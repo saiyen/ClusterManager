@@ -1,7 +1,6 @@
 package Connection;
 
 import Interfaces.IConnection;
-import Models.SSHClientWrapperModel;
 import Models.SSHConnectionModel;
 import ReadConfig.ReadConfig;
 import java.io.File;
@@ -16,14 +15,13 @@ import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
 public class SSHConnection implements IConnection{
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private static HashMap<String, SSHClientWrapperModel> listOfClients = new HashMap<>();
+    private static HashMap<String, SSHClient> listOfClients = new HashMap<>();
     
     public static void makeConnections() throws IOException {
-        ReadConfig read = new ReadConfig();
-        ArrayList<SSHConnectionModel> connections = read.getConnectionProperties();
 
-        String keyPath = ReadConfig.confData.getKeyPath();
-        String knownHostsPath = ReadConfig.confData.getKnownHostsPath();
+        ArrayList<SSHConnectionModel> connections = ReadConfig.getConnections();
+        String keyPath = ReadConfig.getConfigProperties().getKeyPath();
+        String knownHostsPath = ReadConfig.getConfigProperties().getKnownHostsPath();
 
         for (SSHConnectionModel currentConnection : connections) {
             SSHClient sshConnection;
@@ -51,11 +49,11 @@ public class SSHConnection implements IConnection{
             sshConnection.authPublickey(currentConnection.getUser(), loadKey);
             LOGGER.info("Authenticated successfully");
             
-            listOfClients.put(currentConnection.getHost(), new SSHClientWrapperModel(sshConnection, sshConnection.startSession()));
+            listOfClients.put(currentConnection.getHost(), sshConnection);
         }
     }
     
-    public static HashMap<String, SSHClientWrapperModel> getListOfClients() throws IOException {
+    public static HashMap<String, SSHClient> getListOfClients() throws IOException {
         if(listOfClients.isEmpty())
             makeConnections();
         

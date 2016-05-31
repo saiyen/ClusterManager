@@ -1,26 +1,24 @@
 package Connection;
 
-import Models.SSHClientWrapperModel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
+import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.Session;
-import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.TransportException;
 
 public class Execute {   
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     
     public static InputStream executeCommand(String server_IP, String command, String ReturnOutput) throws IOException {
-        SSHClientWrapperModel currentHost = SSHConnection.getListOfClients().get(server_IP);
+        SSHClient currentHost = SSHConnection.getListOfClients().get(server_IP);
         InputStream inputStreamOfCommand = null;
          
         try {
-            Session session = currentHost.getClient().startSession();
-            LOGGER.warning("Can not find session for host: " + server_IP);
+            Session session = currentHost.startSession();
+            
             if(session == null) {
-                System.out.println("Can not find session for host: " + server_IP);
                 LOGGER.warning("Can not find session for host: " + server_IP);
             } else {
                 try {

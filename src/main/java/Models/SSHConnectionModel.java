@@ -14,15 +14,17 @@ public class SSHConnectionModel {
     private String host;
     private int port;
     private String passphrase;    
+    private String uploadPath;
 
     public SSHConnectionModel() {
     }
 
-    public SSHConnectionModel(String user, String host, int port, String passphrase) {
+    public SSHConnectionModel(String user, String host, int port, String passphrase, String uploadPath) {
         this.user = user;
         this.host = host;
         this.port = port;
         this.passphrase = passphrase;
+        this.uploadPath = uploadPath;
     }
 
     
@@ -57,6 +59,13 @@ public class SSHConnectionModel {
     public void setPassphrase(String passphrase) {
         this.passphrase = passphrase;
     }
-    
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
+    }  
     
 }

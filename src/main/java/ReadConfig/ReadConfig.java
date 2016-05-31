@@ -26,44 +26,46 @@ import org.w3c.dom.Element;
  * @author ivan
  */
 public class ReadConfig implements IRead{
-    ArrayList<SSHConnectionModel> connectionData = new ArrayList<SSHConnectionModel>();
-    public static ConfigModel confData = new ConfigModel();
-    InputStream inputStream;
+    private static ArrayList<SSHConnectionModel> connectionData = null;
+    private static ConfigModel confData = null;
     
-    public ArrayList<SSHConnectionModel> getConnectionProperties() {
+    private static void readConnections() {
         try {	
-         File inputFile = new File("./src/main/resources/ConnectionsConfig.xml");
-         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-         Document doc = dBuilder.parse(inputFile);
-         doc.getDocumentElement().normalize();
-         
-         NodeList nList = doc.getElementsByTagName("server");
-         
-         for (int i = 0; i < nList.getLength(); i++) {
-            Node nNode = nList.item(i);
-            
-            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-               Element eElement = (Element) nNode;
-               
-               connectionData.add(new SSHConnectionModel(eElement.getElementsByTagName("user").item(0).getTextContent(),
-                                    eElement.getElementsByTagName("host").item(0).getTextContent(),
-                                    Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent()),
-                                    eElement.getElementsByTagName("passphrase").item(0).getTextContent()));
+            connectionData = new ArrayList<>();
+            File inputFile = new File("./src/main/resources/ConnectionsConfig.xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+            doc.getDocumentElement().normalize();
+
+            NodeList nList = doc.getElementsByTagName("server");
+
+            for (int i = 0; i < nList.getLength(); i++) {
+                Node nNode = nList.item(i);
+
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+
+                    connectionData.add(new SSHConnectionModel(eElement.getElementsByTagName("user").item(0).getTextContent(),
+                                        eElement.getElementsByTagName("host").item(0).getTextContent(),
+                                        Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent()),
+                                        eElement.getElementsByTagName("passphrase").item(0).getTextContent(),
+                                        eElement.getElementsByTagName("upload").item(0).getTextContent()));
+                }
             }
-         }
       } catch (Exception e) {
          e.printStackTrace();
       }
-        return connectionData;
     }
     
-    public void getConfigProperties() throws IOException {
+    private static void readConfigProperties() throws IOException {
+        InputStream inputStream = null;
         try {
+            confData = new ConfigModel();
             Properties prop = new Properties();
             String propFileNeme = "Config.properties";
             
-            inputStream = getClass().getClassLoader().getResourceAsStream(propFileNeme);
+            inputStream = ReadConfig.class.getClassLoader().getResourceAsStream(propFileNeme);
             
             if (inputStream != null) {
                 prop.load(inputStream);
@@ -80,5 +82,19 @@ public class ReadConfig implements IRead{
         } finally {
             inputStream.close();
         }
+    }
+    
+    public static ArrayList<SSHConnectionModel> getConnections() {
+        if(connectionData == null)
+            readConnections();
+        
+        return connectionData;
+    }
+    
+    public static ConfigModel getConfigProperties() throws IOException {
+        if(confData == null)
+            readConfigProperties();
+        
+        return confData;
     }
 }

@@ -1,15 +1,12 @@
 <?xml version="1.0"?>
 <class>
-   <server sname="server1">
-      <user>root</user>
-      <host>127.0.0.1</host>
-      <passphrase>passphrase</passphrase>
-      <port>port</port>
-   </server>
-   <server sname="server2">
-      <user>root</user>
-      <host>127.0.0.2</host>
-      <passphrase>passphrase</passphrase>
-      <port>port</port>
-   </server>
+    <server sname="ClusterManager">
+       <user>root</user>
+       <port>22</port>
+       <upload>/home/download</upload>
+    </server>
+    <server sname="SchoolServer">
+       <port>22</port>
+       <upload>/home/download</upload>
+    </server>
 </class>

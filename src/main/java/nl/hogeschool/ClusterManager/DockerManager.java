@@ -6,14 +6,13 @@ import Models.ContainerModel;
 import Connection.Execute;
 import Connection.SFTPConnection;
 import Connection.SSHConnection;
-import Models.SSHClientWrapperModel;
-import ReadConfig.ReadConfig;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import net.schmizz.sshj.SSHClient;
 
 public class DockerManager implements IContainerRunner {
     private static String server_IP;
@@ -56,10 +55,11 @@ public class DockerManager implements IContainerRunner {
         container_ID = container.get("id").getAsString();
         server_IP = getIPFromContainerID(container_ID);
         destination_IP = container.get("extra").getAsString();
-        String newContainerLocation = ReadConfig.confData.getUploadFolderPath().concat(container_ID+".tar");
-        SFTPConnection sftpTransfer = new SFTPConnection();
+        String newContainerLocation = Tools.searchUploadPath(destination_IP).getUploadPath().concat(container_ID+".tar");
         String containerExportLocation = "/home/DockerContainers/".concat(container_ID)+".tar";
         String containerImportLocation = "/home/ubuntu-0862420/DockerContainers/".concat(container_ID)+".tar";
+        
+        SFTPConnection sftpTransfer = new SFTPConnection();
 
         // Export container to tar file in the ...
         Execute.executeCommand(server_IP, "docker export --output=\""+containerExportLocation+"\" "+container_ID, "Docker Move");
@@ -82,9 +82,9 @@ public class DockerManager implements IContainerRunner {
 
     @Override
     public void getAllContainers() throws IOException, InterruptedException {
-        HashMap<String, SSHClientWrapperModel> listOfClients = SSHConnection.getListOfClients();
+        HashMap<String, SSHClient> listOfClients = SSHConnection.getListOfClients();
 
-        for (Entry<String, SSHClientWrapperModel> client : listOfClients.entrySet()) {
+        for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
             String tempServerIP = client.getKey();
             InputStream resultOfExecute = Execute.executeCommand(tempServerIP, "docker ps -a", "Docker getAllContainers");
             AddToList.addOutputToList(resultOfExecute, tempServerIP, containerType);

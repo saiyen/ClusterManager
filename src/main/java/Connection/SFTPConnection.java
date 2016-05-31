@@ -1,5 +1,6 @@
 package Connection;
 
+import Models.SSHConnectionModel;
 import ReadConfig.ReadConfig;
 import java.io.File;
 import net.schmizz.sshj.SSHClient;
@@ -8,13 +9,22 @@ import net.schmizz.sshj.xfer.FileSystemFile;
 
 import java.io.IOException;
 import java.util.logging.Logger;
+import nl.hogeschool.ClusterManager.Tools;
 
 public class SFTPConnection {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    String downloadPath = ReadConfig.confData.getDownloadFolderPath();
+    String downloadPath = null;
+    
+    public SFTPConnection() {
+        try {
+            downloadPath = ReadConfig.getConfigProperties().getDownloadFolderPath();
+        } catch (Exception e) {
+            LOGGER.warning(e.getMessage());
+        }
+    }
     
     public void downloadFile(String hostname, String fileName) throws IOException {
-        SSHClient targetHost = SSHConnection.getListOfClients().get(hostname).getClient();
+        SSHClient targetHost = SSHConnection.getListOfClients().get(hostname);
 
         try {
             final SFTPClient sftp = targetHost.newSFTPClient();
@@ -34,14 +44,20 @@ public class SFTPConnection {
     }
     
     public void uploadFile(String destinationHost,String fileName) throws IOException {
-        SSHClient targetHost = SSHConnection.getListOfClients().get(destinationHost).getClient();
-        String uploadPath = ReadConfig.confData.getUploadFolderPath();
+        SSHClient targetHost = SSHConnection.getListOfClients().get(destinationHost);
+        
         try {                         
 	    final String src = downloadPath + File.separator + fileName+".tar";
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
-                sftp.put(new FileSystemFile(src), uploadPath);
+                if(Tools.searchUploadPath(destinationHost) == null){
+                    LOGGER.warning("Can not find the server");
+                    return;
+                }
+                    
+                sftp.put(new FileSystemFile(src), Tools.searchUploadPath(destinationHost).getUploadPath());
                 LOGGER.info("The file was successfully downloaded");
+                
             } catch(Exception e) {
                 LOGGER.warning("The file was not uploaded because: " + e.getMessage());
             }finally {
@@ -52,5 +68,5 @@ public class SFTPConnection {
             LOGGER.warning("Can not make SFTP connection because of: " + e.getMessage());
         } 
     }
-
+            
 }
