@@ -1,6 +1,7 @@
 {
   "id" : "875f643a2ac1",
   "type" : "Docker",
+  "containerImage" : "hello-world",
   "name" : "Move",
   "extra" : "145.24.222.144"
 }

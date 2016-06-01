@@ -2,11 +2,16 @@
 <class>
     <server sname="ClusterManager">
        <user>root</user>
+       <host>127.0.0.1</host>
+       <passphrase>phrase</passphrase>
        <port>22</port>
-       <upload>/home/download</upload>
+       <upload>/home/download/</upload>
     </server>
     <server sname="SchoolServer">
+       <user>root</user>
+       <host>127.0.0.1</host>
+       <passphrase>phrase</passphrase>
        <port>22</port>
-       <upload>/home/download</upload>
+       <upload>/home/download/</upload>
     </server>
 </class>

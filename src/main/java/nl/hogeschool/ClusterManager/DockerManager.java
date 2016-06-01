@@ -7,7 +7,6 @@ import Connection.Execute;
 import Connection.SFTPConnection;
 import Connection.SSHConnection;
 import com.google.gson.JsonObject;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -29,9 +28,6 @@ public class DockerManager implements IContainerRunner {
     
     public DockerManager(JsonObject container) {
         this.container = container;
-        this.imageName = container.get("containerImage").getAsString();
-        this.containerType = container.get("type").getAsString();
-        
     }
 
     @Override
@@ -89,9 +85,6 @@ public class DockerManager implements IContainerRunner {
             } else {
                 newContainerLocation = Tools.searchUploadPath(destination_IP).getUploadPath().concat(container_ID +".tar");
             }
-           
-            //String containerExportLocation = "/home/DockerContainers/".concat(container_ID) + ".tar";
-            //String containerImportLocation = "/home/ubuntu-0862420/DockerContainers/".concat(container_ID) + ".tar";
 
             SFTPConnection sftpTransfer = new SFTPConnection();
 
@@ -125,6 +118,7 @@ public class DockerManager implements IContainerRunner {
     public void getAllContainers() throws IOException, InterruptedException {
         HashMap<String, SSHClient> listOfClients = SSHConnection.getListOfClients();
 
+        AddToList.getListOfServersAndContainers().clear();
         for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
             String tempServerIP = client.getKey();
             InputStream resultOfExecute = Execute.executeCommand(tempServerIP, "docker ps -a");
@@ -146,6 +140,8 @@ public class DockerManager implements IContainerRunner {
                 }
             }
         }
+
         return server_IP;
+        
     }
 }
