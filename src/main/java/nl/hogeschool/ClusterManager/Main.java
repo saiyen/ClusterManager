@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Main {
     
-    public static void main(String[] Args) {   
+    public static void main(String[] Args) throws InterruptedException {   
         
         try {
             MyLogger.setup();
@@ -30,17 +30,18 @@ public class Main {
             ReadConfig read = new ReadConfig();
             read.getConfigProperties();
             SSHConnection.makeConnections();
-            List<ServerModel> listOfServersWithContainers = AddToList.allServers;
+            List<ServerModel> listOfServersWithContainers = AddToList.getListOfServersAndContainers();
             // Create a JSONObject from the file by calling the getFromAPI method that's defined in the Client class
             JsonObject container = getJSONObjectFromFile();
             // Create new DockerManager Object, the object gets a JSONObject which contains information about the container and a List of servers to get it's IP address
             IContainerRunner Docker = new DockerManager(container);
             // Get each server with their containers to the server
+           
             Docker.getAllContainers();
             // Docker.moveContainer();
             // Send each server with their containers to the server
             Client.sendToAPI("JSONObject", listOfServersWithContainers);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         } 
     }

@@ -11,7 +11,7 @@ import net.schmizz.sshj.transport.TransportException;
 public class Execute {   
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     
-    public static InputStream executeCommand(String server_IP, String command, String ReturnOutput) throws IOException {
+    public static InputStream executeCommand(String server_IP, String command) throws IOException, InterruptedException {
         SSHClient currentHost = SSHConnection.getListOfClients().get(server_IP);
         InputStream inputStreamOfCommand = null;
          
@@ -23,14 +23,12 @@ public class Execute {
             } else {
                 try {
                     LOGGER.info("Session created for host: " + server_IP);
-                    // Split the string to see if it is about the command getAllContainers
-                    String commandType = splitString(ReturnOutput, 1);
-                    String containerEngineType = splitString(ReturnOutput, 0);
                     // Execute the command
-                    inputStreamOfCommand = session.exec(command).getInputStream();                
+                    inputStreamOfCommand = session.exec(command).getInputStream();
                 } catch(ConnectionException | TransportException e) {
                     LOGGER.warning(e.getMessage());
                 } finally {
+                    Thread.sleep(1000);
                     session.close();
                 }
             } 

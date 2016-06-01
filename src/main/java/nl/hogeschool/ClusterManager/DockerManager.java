@@ -7,11 +7,14 @@ import Connection.Execute;
 import Connection.SFTPConnection;
 import Connection.SSHConnection;
 import com.google.gson.JsonObject;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.schmizz.sshj.SSHClient;
 
 public class DockerManager implements IContainerRunner {
@@ -21,51 +24,68 @@ public class DockerManager implements IContainerRunner {
     private static String containerType;
     private static String destination_IP;
     private final JsonObject container;
-    private final List<ServerModel> listOfServersWithContainers = AddToList.allServers;
+    private List<ServerModel> listOfServersWithContainers = null;
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     
     public DockerManager(JsonObject container) {
         this.container = container;
         this.imageName = container.get("containerImage").getAsString();
         this.containerType = container.get("type").getAsString();
+        
     }
 
     @Override
     public void startContainer() throws IOException {
-        container_ID = container.get("id").getAsString();
-        server_IP = getIPFromContainerID(container_ID);
-        Execute.executeCommand(server_IP, "docker start " + container_ID, "Docker start");
+        try {
+            container_ID = container.get("id").getAsString();
+            server_IP = getIPFromContainerID(container_ID);
+            Execute.executeCommand(server_IP, "docker start " + container_ID);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DockerManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public void stopContainer() throws IOException {
-        container_ID = container.get("id").getAsString();
-        server_IP = getIPFromContainerID(container_ID);
-        Execute.executeCommand(server_IP, "docker stop " + container_ID, "Docker stop");
+        try {
+            container_ID = container.get("id").getAsString();
+            server_IP = getIPFromContainerID(container_ID);
+            Execute.executeCommand(server_IP, "docker stop " + container_ID);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DockerManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
     public void removeContainer() throws IOException {
-        container_ID = container.get("id").getAsString();
-        server_IP = getIPFromContainerID(container_ID);
-        Execute.executeCommand(server_IP, "docker rm " + container_ID, "Docker remove");
+        try {
+            container_ID = container.get("id").getAsString();
+            server_IP = getIPFromContainerID(container_ID);
+            Execute.executeCommand(server_IP, "docker rm " + container_ID);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DockerManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public void moveContainer() throws IOException {
-        container_ID = container.get("id").getAsString();
-        server_IP = getIPFromContainerID(container_ID);
-        destination_IP = container.get("extra").getAsString();
-        String newContainerLocation = Tools.searchUploadPath(destination_IP).getUploadPath().concat(container_ID+".tar");
-        String containerExportLocation = "/home/DockerContainers/".concat(container_ID)+".tar";
-        String containerImportLocation = "/home/ubuntu-0862420/DockerContainers/".concat(container_ID)+".tar";
-        
-        SFTPConnection sftpTransfer = new SFTPConnection();
+        try {
+            container_ID = container.get("id").getAsString();
+            server_IP = getIPFromContainerID(container_ID);
+            destination_IP = container.get("extra").getAsString();
+            String containerExportLocation = "/home/DockerContainers/".concat(container_ID) + ".tar";
+            String containerImportLocation = "/home/ubuntu-0862420/DockerContainers/".concat(container_ID) + ".tar";
 
-        // Export container to tar file in the ...
-        Execute.executeCommand(server_IP, "docker export --output=\""+containerExportLocation+"\" "+container_ID, "Docker Move");
-        sftpTransfer.downloadFile(server_IP, container_ID);
-        sftpTransfer.uploadFile(destination_IP, container_ID);
-        Execute.executeCommand(destination_IP, "cat "+containerImportLocation+" | docker import - "+container_ID+":new", "Docker Move"); 
+            SFTPConnection sftpTransfer = new SFTPConnection();
+
+            // Export container to tar file in the ...
+            Execute.executeCommand(server_IP, "docker export --output=\"" + containerExportLocation + "\" " + container_ID);
+            sftpTransfer.downloadFile(server_IP, container_ID);
+            sftpTransfer.uploadFile(destination_IP, container_ID);
+            Execute.executeCommand(destination_IP, "cat " + containerImportLocation + " | docker import - " + container_ID + ":new");
+        } catch (Exception e) {
+            LOGGER.warning(e.getMessage());
+        }
     }
     
      public void createContainer() throws IOException{
@@ -77,7 +97,11 @@ public class DockerManager implements IContainerRunner {
         container_ID = container.get("id").getAsString();
         server_IP = getIPFromContainerID(container_ID);
         String newName = container.get("extra").getAsString();
-        Execute.executeCommand(server_IP, "docker rename "+container_ID+" "+newName, "Docker rename"); 
+        try { 
+            Execute.executeCommand(server_IP, "docker rename "+container_ID+" "+newName);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DockerManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -86,12 +110,18 @@ public class DockerManager implements IContainerRunner {
 
         for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
             String tempServerIP = client.getKey();
-            InputStream resultOfExecute = Execute.executeCommand(tempServerIP, "docker ps -a", "Docker getAllContainers");
-            AddToList.addOutputToList(resultOfExecute, tempServerIP, containerType);
+            InputStream resultOfExecute = Execute.executeCommand(tempServerIP, "docker ps -a");
+            AddToList.addOutputToList(resultOfExecute, tempServerIP);
         }
     }
 
     public String getIPFromContainerID(String containerID) {
+        try {
+            listOfServersWithContainers = AddToList.getListOfServersAndContainers();
+        } catch (Exception e) {
+            LOGGER.warning(e.getMessage());
+        }
+        
         for (ServerModel server : listOfServersWithContainers) {
             for (ContainerModel theContainer : server.getContainers()) {
                 if (theContainer.getContainerID().contains(containerID)) {

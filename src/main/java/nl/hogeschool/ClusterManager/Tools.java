@@ -15,8 +15,10 @@ import ReadConfig.ReadConfig;
 public class Tools {
     public static SSHConnectionModel searchUploadPath(String hostname) {
         for (SSHConnectionModel uploadPath : ReadConfig.getConnections()) {
-            if(hostname == uploadPath.getHost())
+            if(hostname == uploadPath.getHost()) {
+                System.out.println("here");
                 return uploadPath;
+            }
         }
         
         return null;
