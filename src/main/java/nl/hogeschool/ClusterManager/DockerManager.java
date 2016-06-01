@@ -73,16 +73,33 @@ public class DockerManager implements IContainerRunner {
             container_ID = container.get("id").getAsString();
             server_IP = getIPFromContainerID(container_ID);
             destination_IP = container.get("extra").getAsString();
-            String containerExportLocation = "/home/DockerContainers/".concat(container_ID) + ".tar";
-            String containerImportLocation = "/home/ubuntu-0862420/DockerContainers/".concat(container_ID) + ".tar";
+            String oldContainerLocation;
+            String newContainerLocation;
+                    
+            if(Tools.searchUploadPath(server_IP) == null){
+                LOGGER.warning("Can not find the server");
+                return;
+            } else {
+                oldContainerLocation = Tools.searchUploadPath(server_IP).getUploadPath().concat(container_ID +".tar");
+            }
+            
+            if(Tools.searchUploadPath(destination_IP) == null){
+                LOGGER.warning("Can not find the server");
+                return;
+            } else {
+                newContainerLocation = Tools.searchUploadPath(destination_IP).getUploadPath().concat(container_ID +".tar");
+            }
+           
+            //String containerExportLocation = "/home/DockerContainers/".concat(container_ID) + ".tar";
+            //String containerImportLocation = "/home/ubuntu-0862420/DockerContainers/".concat(container_ID) + ".tar";
 
             SFTPConnection sftpTransfer = new SFTPConnection();
 
             // Export container to tar file in the ...
-            Execute.executeCommand(server_IP, "docker export --output=\"" + containerExportLocation + "\" " + container_ID);
+            Execute.executeCommand(server_IP, "docker export --output=\"" + oldContainerLocation + "\" " + container_ID);
             sftpTransfer.downloadFile(server_IP, container_ID);
             sftpTransfer.uploadFile(destination_IP, container_ID);
-            Execute.executeCommand(destination_IP, "cat " + containerImportLocation + " | docker import - " + container_ID + ":new");
+            Execute.executeCommand(destination_IP, "cat " + newContainerLocation + " | docker import - " + container_ID + ":new");
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
         }
