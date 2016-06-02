@@ -2,16 +2,16 @@
 <class>
     <server sname="ClusterManager">
        <user>root</user>
-       <host>127.0.0.1</host>
-       <passphrase>phrase</passphrase>
+       <host>146.185.159.191</host>
+       <passphrase>hogeschool</passphrase>
        <port>22</port>
-       <upload>/home/download/</upload>
+       <upload>/home/DockerContainers/</upload>
     </server>
     <server sname="SchoolServer">
-       <user>root</user>
-       <host>127.0.0.1</host>
-       <passphrase>phrase</passphrase>
+       <user>ubuntu-0862420</user>
+       <host>145.24.222.144</host>
+       <passphrase>hogeschool</passphrase>
        <port>22</port>
-       <upload>/home/download/</upload>
+       <upload>/home/ubuntu-0862420/DockerContainers/</upload>
     </server>
 </class>

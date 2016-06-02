@@ -13,11 +13,11 @@ import java.util.logging.Logger;
 
 public class ListHelper {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private static List<ServerModel> allServers = new ArrayList<>();
-    private static List<ContainerModel> containers;
+    private static List<ServerModel> ALL_SERVERS = new ArrayList<>();
+    private static List<ContainerModel> CONTAINERS;
 
     public static void addOutputToList(InputStream executedCommando, String server_IP) throws IOException {
-        containers = new ArrayList<>();
+        CONTAINERS = new ArrayList<>();
         Reader inputStreamReaderOfExecutedCommando = new InputStreamReader(executedCommando);
         BufferedReader bufferedReaderOfExecutedCommando = new BufferedReader(inputStreamReaderOfExecutedCommando);
         String line;
@@ -38,20 +38,20 @@ public class ListHelper {
             String current_name = elements[5];
 
             // Save these values in the class Server which has all the containers
-            containers.add(new ContainerModel(current_ID, current_name, current_status, current_image));
-            allServers.add(new ServerModel(current_IP, containers));
+            CONTAINERS.add(new ContainerModel(current_ID, current_name, current_status, current_image));
+            ALL_SERVERS.add(new ServerModel(current_IP, CONTAINERS));
             
-            for(int i=0; i < containers.size(); i++){
-              System.out.println("Container " + containers.get(i).getContainerID() + " has been added to the server: " + current_IP);   
+            for(int i=0; i < CONTAINERS.size(); i++){
+              System.out.println("Container " + CONTAINERS.get(i).getContainerID() + " has been added to the server: " + current_IP);   
             }
         }
     }
     
     public static List<ServerModel> getListOfServersAndContainers() throws IOException{
-        if(allServers.size() == 0){
+        if(ALL_SERVERS.size() == 0){
             LOGGER.warning("The list of servers is empty");
         }
         
-        return allServers;
+        return ALL_SERVERS;
     }
 }

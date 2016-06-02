@@ -3,7 +3,7 @@ package nl.hogeschool.ClusterManager;
 import Interfaces.IContainerRunner;
 import Models.ServerModel;
 import Models.ContainerModel;
-import Connection.ExecuteCommad;
+import Connection.ExecuteCommand;
 import Connection.SFTPConnection;
 import Connection.SSHConnection;
 import com.google.gson.JsonObject;
@@ -17,11 +17,6 @@ import java.util.logging.Logger;
 import net.schmizz.sshj.SSHClient;
 
 public class DockerContainerManager implements IContainerRunner {
-    private static String SERVER_IP;
-    private static String CONTAINER_IP;
-    private static String IMAGE_NAME;
-    private static String CONTAINER_TYPE;
-    private static String DESTINATION_IP;
     private final JsonObject container;
     private List<ServerModel> listOfServersWithContainers = null;
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -33,9 +28,9 @@ public class DockerContainerManager implements IContainerRunner {
     @Override
     public void startContainer() throws IOException {
         try {
-            CONTAINER_IP = container.get("id").getAsString();
-            SERVER_IP = getIPFromContainerID(CONTAINER_IP);
-            ExecuteCommad.execute(SERVER_IP, "docker start " + CONTAINER_IP);
+            String container_id = container.get("id").getAsString();
+            String server_ip = getIPFromContainerID(container_id);
+            ExecuteCommand.execute(server_ip, "docker start " + container_id);
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -44,9 +39,9 @@ public class DockerContainerManager implements IContainerRunner {
     @Override
     public void stopContainer() throws IOException {
         try {
-            CONTAINER_IP = container.get("id").getAsString();
-            SERVER_IP = getIPFromContainerID(CONTAINER_IP);
-            ExecuteCommad.execute(SERVER_IP, "docker stop " + CONTAINER_IP);
+            String container_id = container.get("id").getAsString();
+            String server_ip = getIPFromContainerID(container_id);
+            ExecuteCommand.execute(server_ip, "docker stop " + container_id);
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -55,9 +50,9 @@ public class DockerContainerManager implements IContainerRunner {
     @Override
     public void removeContainer() throws IOException {
         try {
-            CONTAINER_IP = container.get("id").getAsString();
-            SERVER_IP = getIPFromContainerID(CONTAINER_IP);
-            ExecuteCommad.execute(SERVER_IP, "docker rm " + CONTAINER_IP);
+            String container_id = container.get("id").getAsString();
+            String server_ip = getIPFromContainerID(container_id);
+            ExecuteCommand.execute(server_ip, "docker rm " + container_id);
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -66,56 +61,44 @@ public class DockerContainerManager implements IContainerRunner {
     @Override
     public void moveContainer() throws IOException {
         try {
-            CONTAINER_IP = container.get("id").getAsString();
-            SERVER_IP = getIPFromContainerID(CONTAINER_IP);
-            DESTINATION_IP = container.get("extra").getAsString();
+            String container_id = container.get("id").getAsString();
+            String home_ip = getIPFromContainerID(container_id);
+            String destination_ip = container.get("destinationIp").getAsString();
             String oldContainerLocation;
             String newContainerLocation;
                     
-            if(Tools.searchUploadPath(SERVER_IP) == null){
+            if(Tools.searchUploadPath(home_ip) == null){
                 LOGGER.warning("Can not find the server");
                 return;
             } else {
-                oldContainerLocation = Tools.searchUploadPath(SERVER_IP).getUploadPath().concat(CONTAINER_IP +".tar");
+                oldContainerLocation = Tools.searchUploadPath(home_ip).getUploadPath().concat(container_id +".tar");
             }
             
-            if(Tools.searchUploadPath(DESTINATION_IP) == null){
+            if(Tools.searchUploadPath(destination_ip) == null){
                 LOGGER.warning("Can not find the server");
                 return;
             } else {
-                newContainerLocation = Tools.searchUploadPath(DESTINATION_IP).getUploadPath().concat(CONTAINER_IP +".tar");
+                newContainerLocation = Tools.searchUploadPath(destination_ip).getUploadPath().concat(container_id +".tar");
             }
 
             SFTPConnection sftpTransfer = new SFTPConnection();
 
             // Export container to tar file in the ...
-            ExecuteCommad.execute(SERVER_IP, "docker export --output=\"" + oldContainerLocation + "\" " + CONTAINER_IP);
-            sftpTransfer.downloadFile(SERVER_IP, CONTAINER_IP);
-            sftpTransfer.uploadFile(DESTINATION_IP, CONTAINER_IP);
-            ExecuteCommad.execute(DESTINATION_IP, "cat " + newContainerLocation + " | docker import - " + CONTAINER_IP + ":new");
+            ExecuteCommand.execute(home_ip, "docker export --output=\"" + oldContainerLocation + "\" " + container_id);
+            sftpTransfer.downloadFile(home_ip, container_id);
+            sftpTransfer.uploadFile(destination_ip, container_id);
+            ExecuteCommand.execute(destination_ip, "cat " + newContainerLocation + " | docker import - " + container_id + ":new");
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
         }
     }
     
     @Override
-    public void createContainer() throws IOException{
-        /*String newName = "";
-        container_Name = container.get("name").getAsString();
-        server_IP = getIPFromContainerID(container_Name);
-        
-        if(container_Name.equals(newName)){
-            System.out.println("This name does already exist! Insert a new name.");
-        }
-        
-        else{
-            System.out.println(container);
-            //Execute.executeCommand(server_IP, "docker run" "IMAGE");
-        }*/
-        SERVER_IP = getIPFromContainerID(CONTAINER_IP);
-        DESTINATION_IP = container.get("extra").getAsString();
+    public void createContainer() throws IOException {
+        String destination_ip = container.get("destinationIp").getAsString();
+        String image = container.get("image").getAsString();
         try { 
-            ExecuteCommad.execute(SERVER_IP, "Hello-world " + "docker run");
+            ExecuteCommand.execute(destination_ip, "docker run " + image);
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -123,11 +106,11 @@ public class DockerContainerManager implements IContainerRunner {
     
     @Override
     public void renameContainer() throws IOException{
-        CONTAINER_IP = container.get("id").getAsString();
-        SERVER_IP = getIPFromContainerID(CONTAINER_IP);
+        String container_id = container.get("id").getAsString();
+        String server_ip = getIPFromContainerID(container_id);
         String newName = container.get("extra").getAsString();
         try { 
-            ExecuteCommad.execute(SERVER_IP, "docker rename "+CONTAINER_IP+" "+newName);
+            ExecuteCommand.execute(server_ip, "docker rename "+container_id+" "+newName);
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -140,7 +123,7 @@ public class DockerContainerManager implements IContainerRunner {
         ListHelper.getListOfServersAndContainers().clear();
         for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
             String tempServerIP = client.getKey();
-            InputStream resultOfExecute = ExecuteCommad.execute(tempServerIP, "docker ps -a");
+            InputStream resultOfExecute = ExecuteCommand.execute(tempServerIP, "docker ps -a");
             ListHelper.addOutputToList(resultOfExecute, tempServerIP);
         }
     }
@@ -152,15 +135,16 @@ public class DockerContainerManager implements IContainerRunner {
             LOGGER.warning(e.getMessage());
         }
         
+        String server_ip = "";
         for (ServerModel server : listOfServersWithContainers) {
             for (ContainerModel theContainer : server.getContainers()) {
                 if (theContainer.getContainerID().contains(containerID)) {
-                    SERVER_IP = server.getIPAddress();
+                    server_ip = server.getIPAddress();
                 }
             }
         }
 
-        return SERVER_IP;
+        return server_ip;
         
     }
 }

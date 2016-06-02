@@ -8,21 +8,21 @@ import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.TransportException;
 
-public class ExecuteCommad {   
+public class ExecuteCommand {   
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     
-    public static InputStream execute(String server_IP, String command) throws IOException, InterruptedException {
-        SSHClient currentHost = SSHConnection.getListOfClients().get(server_IP);
+    public static InputStream execute(String server_ip, String command) throws IOException, InterruptedException {
+        SSHClient currentHost = SSHConnection.getListOfClients().get(server_ip);
         InputStream inputStreamOfCommand = null;
          
         try {
             Session session = currentHost.startSession();
             
             if(session == null) {
-                LOGGER.warning("Can not find session for host: " + server_IP);
+                LOGGER.warning("Can not find session for host: " + server_ip);
             } else {
                 try {
-                    LOGGER.info("Session created for host: " + server_IP);
+                    LOGGER.info("Session created for host: " + server_ip);
                     // Execute the command
                     inputStreamOfCommand = session.exec(command).getInputStream();
                 } catch(ConnectionException | TransportException e) {

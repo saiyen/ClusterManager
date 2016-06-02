@@ -1,0 +1,16 @@
+Jun 02, 2016 2:01:13 PM Connection.SSHConnection makeConnections
+WARNING: Could not verify `ecdsa-sha2-nistp256` host key with fingerprint `be:d8:9a:9a:52:d7:43:90:37:9b:2d:78:1f:7f:0b:71` for `146.185.159.191` on port 22
+Jun 02, 2016 2:01:13 PM Connection.SSHConnection makeConnections
+INFO: Authenticated successfully
+Jun 02, 2016 2:01:13 PM Connection.SSHConnection makeConnections
+WARNING: Could not verify `ecdsa-sha2-nistp256` host key with fingerprint `84:e9:f4:1a:5f:da:d6:38:ea:d8:d6:38:df:96:57:4d` for `145.24.222.144` on port 22
+Jun 02, 2016 2:01:13 PM Connection.SSHConnection makeConnections
+INFO: Authenticated successfully
+Jun 02, 2016 2:01:45 PM nl.hogeschool.ClusterManager.ListHelper getListOfServersAndContainers
+WARNING: The list of servers is empty
+Jun 02, 2016 2:01:47 PM Connection.ExecuteCommand execute
+INFO: Session created for host: 145.24.222.144
+Jun 02, 2016 2:02:06 PM Connection.ExecuteCommand execute
+INFO: Session created for host: 146.185.159.191
+Jun 02, 2016 2:02:39 PM Connection.ExecuteCommand execute
+INFO: Session created for host: 145.24.222.144

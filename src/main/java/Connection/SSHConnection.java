@@ -1,6 +1,5 @@
 package Connection;
 
-import Interfaces.IConnection;
 import Models.SSHConnectionModel;
 import ReadConfig.ReadConfig;
 import java.io.File;
@@ -13,9 +12,9 @@ import net.schmizz.sshj.common.DisconnectReason;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
-public class SSHConnection implements IConnection{
+public class SSHConnection {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private static HashMap<String, SSHClient> listOfClients = new HashMap<>();
+    private static HashMap<String, SSHClient> NODES_COLLECTION = new HashMap<>();
     
     public static void makeConnections() throws IOException {
 
@@ -49,15 +48,15 @@ public class SSHConnection implements IConnection{
             sshConnection.authPublickey(currentConnection.getUser(), loadKey);
             LOGGER.info("Authenticated successfully");
             
-            listOfClients.put(currentConnection.getHost(), sshConnection);
+            NODES_COLLECTION.put(currentConnection.getHost(), sshConnection);
         }
     }
     
     public static HashMap<String, SSHClient> getListOfClients() throws IOException {
-        if(listOfClients.isEmpty())
+        if(NODES_COLLECTION.isEmpty())
             makeConnections();
         
-            return listOfClients;
+            return NODES_COLLECTION;
     }
 
 }

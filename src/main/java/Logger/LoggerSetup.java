@@ -12,7 +12,7 @@ import java.util.logging.*;
  * @author Ivan Ivanov
  */
 
-public class MyLogger {
+public class LoggerSetup {
 
   static private FileHandler fileTxt;
   static private SimpleFormatter formatterTxt;
@@ -37,7 +37,7 @@ public class MyLogger {
     fileTxt.setFormatter(formatterTxt);
     logger.addHandler(fileTxt);
 
-    formatterHTML = new MyHtmlFormatter();
+    formatterHTML = new LoggerHTMLFormatter();
     fileHTML.setFormatter(formatterHTML);
     logger.addHandler(fileHTML);
   }

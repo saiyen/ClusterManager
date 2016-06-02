@@ -18,7 +18,7 @@ import java.util.logging.LogRecord;
  */
 
 // this custom formatter formats parts of a log record to a single line
-class MyHtmlFormatter extends Formatter {
+class LoggerHTMLFormatter extends Formatter {
 
   // this method is called for every log records
   public String format(LogRecord rec) {

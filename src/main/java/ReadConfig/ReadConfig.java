@@ -5,7 +5,6 @@
  */
 package ReadConfig;
 
-import Interfaces.IRead;
 import Models.ConfigModel;
 import Models.SSHConnectionModel;
 import java.io.FileNotFoundException;
@@ -25,13 +24,13 @@ import org.w3c.dom.Element;
  *
  * @author ivan
  */
-public class ReadConfig implements IRead{
-    private static ArrayList<SSHConnectionModel> connectionData = null;
-    private static ConfigModel confData = null;
+public class ReadConfig {
+    private static ArrayList<SSHConnectionModel> CONNECTION_DATA = null;
+    private static ConfigModel CONFIG_DATA = null;
     
     private static void readConnections() {
         try {	
-            connectionData = new ArrayList<>();
+            CONNECTION_DATA = new ArrayList<>();
             File inputFile = new File("./src/main/resources/ConnectionsConfig.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -46,7 +45,7 @@ public class ReadConfig implements IRead{
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
 
-                    connectionData.add(new SSHConnectionModel(eElement.getElementsByTagName("user").item(0).getTextContent(),
+                    CONNECTION_DATA.add(new SSHConnectionModel(eElement.getElementsByTagName("user").item(0).getTextContent(),
                                         eElement.getElementsByTagName("host").item(0).getTextContent(),
                                         Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent()),
                                         eElement.getElementsByTagName("passphrase").item(0).getTextContent(),
@@ -61,7 +60,7 @@ public class ReadConfig implements IRead{
     private static void readConfigProperties() throws IOException {
         InputStream inputStream = null;
         try {
-            confData = new ConfigModel();
+            CONFIG_DATA = new ConfigModel();
             Properties prop = new Properties();
             String propFileNeme = "Config.properties";
             
@@ -73,9 +72,9 @@ public class ReadConfig implements IRead{
                 throw new FileNotFoundException("property file '" + propFileNeme + "' not fount in the classpath");
             }
             
-            confData.setKeyPath(prop.getProperty("private-key-path"));
-            confData.setKnownHostsPath(prop.getProperty("known-hosts-path"));
-            confData.setDownloadFolderPath(prop.getProperty("download-folder"));
+            CONFIG_DATA.setKeyPath(prop.getProperty("private-key-path"));
+            CONFIG_DATA.setKnownHostsPath(prop.getProperty("known-hosts-path"));
+            CONFIG_DATA.setDownloadFolderPath(prop.getProperty("download-folder"));
             
         } catch (Exception e) {
             System.out.println("Exception: " + e);
@@ -85,16 +84,16 @@ public class ReadConfig implements IRead{
     }
     
     public static ArrayList<SSHConnectionModel> getConnections() {
-        if(connectionData == null)
+        if(CONNECTION_DATA == null)
             readConnections();
         
-        return connectionData;
+        return CONNECTION_DATA;
     }
     
     public static ConfigModel getConfigProperties() throws IOException {
-        if(confData == null)
+        if(CONFIG_DATA == null)
             readConfigProperties();
         
-        return confData;
+        return CONFIG_DATA;
     }
 }
