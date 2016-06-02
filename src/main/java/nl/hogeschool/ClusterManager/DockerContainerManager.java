@@ -98,8 +98,27 @@ public class DockerContainerManager implements IContainerRunner {
         }
     }
     
+    @Override
     public void createContainer() throws IOException{
-
+        /*String newName = "";
+        container_Name = container.get("name").getAsString();
+        server_IP = getIPFromContainerID(container_Name);
+        
+        if(container_Name.equals(newName)){
+            System.out.println("This name does already exist! Insert a new name.");
+        }
+        
+        else{
+            System.out.println(container);
+            //Execute.executeCommand(server_IP, "docker run" "IMAGE");
+        }*/
+        SERVER_IP = getIPFromContainerID(CONTAINER_IP);
+        DESTINATION_IP = container.get("extra").getAsString();
+        try { 
+            ExecuteCommad.execute(SERVER_IP, "Hello-world " + "docker run");
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
