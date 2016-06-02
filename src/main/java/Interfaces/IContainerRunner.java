@@ -8,5 +8,6 @@ public interface IContainerRunner {
     void removeContainer() throws IOException;
     void moveContainer() throws IOException;
     void renameContainer() throws IOException;
+    void createContainer() throws IOException;
     void getAllContainers() throws IOException, InterruptedException;
 }
