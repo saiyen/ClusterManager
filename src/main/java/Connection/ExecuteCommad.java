@@ -8,10 +8,10 @@ import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.TransportException;
 
-public class Execute {   
+public class ExecuteCommad {   
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     
-    public static InputStream executeCommand(String server_IP, String command) throws IOException, InterruptedException {
+    public static InputStream execute(String server_IP, String command) throws IOException, InterruptedException {
         SSHClient currentHost = SSHConnection.getListOfClients().get(server_IP);
         InputStream inputStreamOfCommand = null;
          

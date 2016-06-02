@@ -25,7 +25,6 @@ class MyHtmlFormatter extends Formatter {
     StringBuffer buf = new StringBuffer(1000);
     buf.append("<tr>\n");
 
-    // colorize any levels >= WARNING in red
     if (rec.getLevel().intValue() >= Level.WARNING.intValue()) {
       buf.append("\t<td style=\"color:red\">");
       buf.append("<b>");
@@ -56,9 +55,8 @@ class MyHtmlFormatter extends Formatter {
     return date_format.format(resultdate);
   }
 
-  // this method is called just after the handler using this
-  // formatter is created
-  public String getHead(Handler h) {
+  
+    public String getHead(Handler h) {
       return "<!DOCTYPE html>\n<head>\n<style>\n"
           + "table { width: 100% }\n"
           + "th { font:bold 10pt Tahoma; }\n"
@@ -76,8 +74,6 @@ class MyHtmlFormatter extends Formatter {
           + "</tr>\n";
     }
 
-  // this method is called just after the handler using this
-  // formatter is closed
   public String getTail(Handler h) {
     return "</table>\n</body>\n</html>";
   }

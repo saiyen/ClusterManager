@@ -1,9 +1,6 @@
 package nl.hogeschool.ClusterManager;
 
 import Models.ServerModel;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
-import java.io.FileReader;
 import java.util.List;
 import Interfaces.IDataFormatChooser;
 

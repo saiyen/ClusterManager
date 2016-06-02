@@ -10,9 +10,8 @@ import java.util.List;
 import Models.ContainerModel;
 import Models.ServerModel;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
-public class AddToList {
+public class ListHelper {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static List<ServerModel> allServers = new ArrayList<>();
     private static List<ContainerModel> containers;

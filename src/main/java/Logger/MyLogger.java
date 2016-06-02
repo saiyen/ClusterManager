@@ -21,10 +21,8 @@ public class MyLogger {
 
   static public void setup() throws IOException {
 
-    // get the global logger to configure it
     Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    // suppress the logging output to the console
     Logger rootLogger = Logger.getLogger("");
     Handler[] handlers = rootLogger.getHandlers();
     if (handlers[0] instanceof ConsoleHandler) {
@@ -35,12 +33,10 @@ public class MyLogger {
     fileTxt = new FileHandler("./src/main/resources/logger/Logging.txt");
     fileHTML = new FileHandler("./src/main/resources/logger/Logging.html");
 
-    // create a TXT formatter
     formatterTxt = new SimpleFormatter();
     fileTxt.setFormatter(formatterTxt);
     logger.addHandler(fileTxt);
 
-    // create an HTML formatter
     formatterHTML = new MyHtmlFormatter();
     fileHTML.setFormatter(formatterHTML);
     logger.addHandler(fileHTML);

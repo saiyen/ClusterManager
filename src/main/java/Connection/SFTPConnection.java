@@ -1,6 +1,5 @@
 package Connection;
 
-import Models.SSHConnectionModel;
 import ReadConfig.ReadConfig;
 import java.io.File;
 import net.schmizz.sshj.SSHClient;

@@ -1,18 +1,10 @@
 package nl.hogeschool.ClusterManager;
 
-import API.JsonAPI;
-import Models.ServerModel;
+import API.ContainerAPI;
 import Connection.SSHConnection;
 import Logger.MyLogger;
 import ReadConfig.ReadConfig;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
 
 public class Main {
@@ -21,13 +13,12 @@ public class Main {
         
         try {
             MyLogger.setup();
-            ReadConfig read = new ReadConfig();
-            read.getConfigProperties();
-            read.getConnections();
+            ReadConfig.getConfigProperties();
+            ReadConfig.getConnections();
             SSHConnection.makeConnections();
             
             //API
-            JsonAPI api = new JsonAPI();
+            ContainerAPI api = new ContainerAPI();
             api.requests();
 
         } catch (IOException e) {
