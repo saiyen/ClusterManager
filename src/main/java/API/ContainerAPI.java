@@ -67,5 +67,13 @@ public class ContainerAPI {
             docker.moveContainer();
             return "{\"status\": \"OK\"}";
         });
+        
+        post("/renameContainer", "application/json", (request, response) -> {
+            JsonObject containerInfo = parser.parse(request.body()).getAsJsonObject();
+            DockerContainerManager docker = new DockerContainerManager(containerInfo);
+            docker.getAllContainers();
+            docker.renameContainer();
+            return "{\"status\": \"OK\"}";
+        });
     }
 }

@@ -108,7 +108,7 @@ public class DockerContainerManager implements IContainerRunner {
     public void renameContainer() throws IOException{
         String container_id = container.get("id").getAsString();
         String server_ip = getIPFromContainerID(container_id);
-        String newName = container.get("extra").getAsString();
+        String newName = container.get("newName").getAsString();
         try { 
             ExecuteCommand.execute(server_ip, "docker rename "+container_id+" "+newName);
         } catch (InterruptedException ex) {
