@@ -18,14 +18,13 @@ public class ListHelper {
 
     public static void addOutputToList(InputStream executedCommando, String server_IP) throws IOException {
         CONTAINERS = new ArrayList<>();
-        Reader inputStreamReaderOfExecutedCommando = new InputStreamReader(executedCommando);
-        BufferedReader bufferedReaderOfExecutedCommando = new BufferedReader(inputStreamReaderOfExecutedCommando);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(executedCommando));
         String line;
         
         // Read the output given by the execute command per line
         // Skip the first line
-        bufferedReaderOfExecutedCommando.readLine();
-        while ((line = bufferedReaderOfExecutedCommando.readLine()) != null) {
+        reader.readLine();
+        while ((line = reader.readLine()) != null) {
         // Divide each line per , or " " to split by Id, Name etc
 
             String[] elements = line.split("\\s{2,}");
@@ -39,16 +38,12 @@ public class ListHelper {
 
             // Save these values in the class Server which has all the containers
             CONTAINERS.add(new ContainerModel(current_ID, current_name, current_status, current_image));
-            ALL_SERVERS.add(new ServerModel(current_IP, CONTAINERS));
-            
-            for(int i=0; i < CONTAINERS.size(); i++){
-              System.out.println("Container " + CONTAINERS.get(i).getContainerID() + " has been added to the server: " + current_IP);   
-            }
         }
+        ALL_SERVERS.add(new ServerModel(server_IP, CONTAINERS));
     }
     
     public static List<ServerModel> getListOfServersAndContainers() throws IOException{
-        if(ALL_SERVERS.size() == 0){
+        if(ALL_SERVERS.isEmpty()){
             LOGGER.warning("The list of servers is empty");
         }
         

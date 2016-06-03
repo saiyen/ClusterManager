@@ -120,7 +120,6 @@ public class DockerContainerManager implements IContainerRunner {
     public void getAllContainers() throws IOException, InterruptedException {
         HashMap<String, SSHClient> listOfClients = SSHConnection.getListOfClients();
 
-        ListHelper.getListOfServersAndContainers().clear();
         for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
             String tempServerIP = client.getKey();
             InputStream resultOfExecute = ExecuteCommand.execute(tempServerIP, "docker ps -a");

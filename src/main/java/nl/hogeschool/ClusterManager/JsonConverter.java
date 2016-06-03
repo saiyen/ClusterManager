@@ -5,11 +5,21 @@
  */
 package nl.hogeschool.ClusterManager;
 
+import Models.ContainerModel;
 import Models.ServerModel;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,19 +29,52 @@ public class JsonConverter implements Interfaces.IDataFormatChooser {
 
     @Override
     public void convertToDataFormat(List<ServerModel> servers) {
-        // Convert object to JSON string
+
         Gson gson = new Gson();
-
-//        String json = gson.toJson(servers);
-//        System.out.println(json);
-
-        // Convert object to JSON string and save into a file directly
-        try (FileWriter writer = new FileWriter("./src/main/resources/json/Containers.json")) {
-
-            gson.toJson(servers, writer);
-
-        } catch (IOException e) {
+        
+        JsonObject jsonWrapper = new JsonObject();          
+        JsonArray jsonWrapperArray = new JsonArray();
+        try {        
+            JsonObject allServersData = new JsonObject();
+            
+            int count = 0;
+            for (ServerModel server : servers) {
+                JsonArray serverPlusContainersArray = new JsonArray();
+                JsonObject serverPLusContainer = new JsonObject();
+                
+                serverPLusContainer.addProperty("id", server.getIPAddress());
+                
+                JsonArray containerArray = new JsonArray();
+                int containerCount = 0;
+                for (ContainerModel container : server.getContainers()) { 
+                    JsonObject containerObject = new JsonObject();
+                    containerObject.addProperty("name", container.getContainerName());
+                    containerArray.add(containerObject);
+                    containerCount++;
+                }
+                
+                serverPLusContainer.add("container" + containerCount, containerArray);
+                
+                serverPlusContainersArray.add(serverPLusContainer);
+                allServersData.add("server" + count, serverPlusContainersArray);
+                
+                count++;
+            }
+            
+            jsonWrapperArray.add(allServersData);
+            jsonWrapper.add("servers", jsonWrapperArray);
+            
+        } catch (JsonParseException e) {
             e.getMessage();
-        }
+        }            
+        
+        try {
+            FileWriter fileWriter = new FileWriter("./src/main/resources/json/Containers.json");
+            fileWriter.write(jsonWrapper.toString()); 
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException ex) {
+            Logger.getLogger(JsonConverter.class.getName()).log(Level.SEVERE, null, ex);
+        } 
     } 
 }
