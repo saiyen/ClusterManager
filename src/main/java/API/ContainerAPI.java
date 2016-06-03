@@ -22,9 +22,10 @@ public class ContainerAPI {
         JsonParser parser = new JsonParser();
          
         get("/getAllContainers", (req, res) -> {
-            IContainerRunner docker = new DockerContainerManager(new JsonObject());
-            docker.getAllContainers();
             Gson gson = new Gson();
+            IContainerRunner docker = new DockerContainerManager(new JsonObject());
+            ListHelper.getListOfServersAndContainers().clear();
+            docker.getAllContainers();
             return gson.toJson(ListHelper.getListOfServersAndContainers());
         });
         
