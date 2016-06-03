@@ -42,18 +42,18 @@ public class JsonConverter implements Interfaces.IDataFormatChooser {
                 JsonArray serverPlusContainersArray = new JsonArray();
                 JsonObject serverPLusContainer = new JsonObject();
                 
-                serverPLusContainer.addProperty("id", server.getIPAddress());
+                serverPLusContainer.addProperty("ip", server.getIPAddress());
                 
-                JsonArray containerArray = new JsonArray();
+                //JsonArray containerArray = new JsonArray();
                 int containerCount = 0;
                 for (ContainerModel container : server.getContainers()) { 
                     JsonObject containerObject = new JsonObject();
                     containerObject.addProperty("name", container.getContainerName());
-                    containerArray.add(containerObject);
+                    serverPLusContainer.add("container" + containerCount, containerObject);
                     containerCount++;
                 }
                 
-                serverPLusContainer.add("container" + containerCount, containerArray);
+                //serverPLusContainer.add("container" + containerCount, containerArray);
                 
                 serverPlusContainersArray.add(serverPLusContainer);
                 allServersData.add("server" + count, serverPlusContainersArray);
