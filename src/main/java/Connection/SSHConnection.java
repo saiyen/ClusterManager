@@ -26,9 +26,11 @@ public class SSHConnection {
             SSHClient sshConnection;
             sshConnection = new SSHClient();
             sshConnection.loadKnownHosts(new File(knownHostsPath));
+            boolean connectionFlag = false;
             
             try {
                 sshConnection.connect(currentConnection.getHost());
+                connectionFlag = true;
             } catch (TransportException e) {
                 if (e.getDisconnectReason() == DisconnectReason.HOST_KEY_NOT_VERIFIABLE) {
                     String msg = e.getMessage();
@@ -37,6 +39,7 @@ public class SSHConnection {
                     sshConnection = new SSHClient();
                     sshConnection.addHostKeyVerifier(fingerPrint);
                     sshConnection.connect(currentConnection.getHost());
+                    connectionFlag = true;
                 } else {
                     throw e;
                 }
@@ -44,11 +47,17 @@ public class SSHConnection {
                 LOGGER.warning(e.getMessage());
             }
 
-            KeyProvider loadKey = sshConnection.loadKeys(keyPath, currentConnection.getPassphrase());
-            sshConnection.authPublickey(currentConnection.getUser(), loadKey);
-            LOGGER.info("Authenticated successfully");
+            try {
+                KeyProvider loadKey = sshConnection.loadKeys(keyPath, currentConnection.getPassphrase());
+                sshConnection.authPublickey(currentConnection.getUser(), loadKey);
+                LOGGER.info("Authenticated successfully");
+            } catch (Exception e) {
+                LOGGER.warning(e.getMessage());
+                connectionFlag = false;
+            }
             
-            NODES_COLLECTION.put(currentConnection.getHost(), sshConnection);
+            if(connectionFlag)
+                NODES_COLLECTION.put(currentConnection.getHost(), sshConnection);
         }
     }
     
