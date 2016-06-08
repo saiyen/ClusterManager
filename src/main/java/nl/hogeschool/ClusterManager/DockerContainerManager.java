@@ -26,46 +26,40 @@ public class DockerContainerManager implements IContainerRunner {
     }
 
     @Override
-    public int startContainer() throws IOException {
+    public void startContainer() throws IOException {
         try {
             String container_id = container.get("id").getAsString();
             String server_ip = getIPFromContainerID(container_id);
             ExecuteCommand.execute(server_ip, "docker start " + container_id);
-            return 1;
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
         }
     }
 
     @Override
-    public int stopContainer() throws IOException {
+    public void stopContainer() throws IOException {
         try {
             String container_id = container.get("id").getAsString();
             String server_ip = getIPFromContainerID(container_id);
             ExecuteCommand.execute(server_ip, "docker stop " + container_id);
-            return 1; 
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
         }
     }
     
     @Override
-    public int removeContainer() throws IOException {
+    public void removeContainer() throws IOException {
         try {
             String container_id = container.get("id").getAsString();
             String server_ip = getIPFromContainerID(container_id);
             ExecuteCommand.execute(server_ip, "docker rm " + container_id);
-            return 1;
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
         }
     }
 
     @Override
-    public int moveContainer() throws IOException {
+    public void moveContainer() throws IOException {
         try {
             String container_id = container.get("id").getAsString();
             String home_ip = getIPFromContainerID(container_id);
@@ -75,14 +69,14 @@ public class DockerContainerManager implements IContainerRunner {
                     
             if(Tools.searchUploadPath(home_ip) == null){
                 LOGGER.warning("Can not find the server");
-                return 0;
+                return;
             } else {
                 oldContainerLocation = Tools.searchUploadPath(home_ip).getUploadPath().concat(container_id +".tar");
             }
             
             if(Tools.searchUploadPath(destination_ip) == null){
                 LOGGER.warning("Can not find the server");
-                return 0;
+                return;
             } else {
                 newContainerLocation = Tools.searchUploadPath(destination_ip).getUploadPath().concat(container_id +".tar");
             }
@@ -94,37 +88,31 @@ public class DockerContainerManager implements IContainerRunner {
             sftpTransfer.downloadFile(home_ip, container_id);
             sftpTransfer.uploadFile(destination_ip, container_id);
             ExecuteCommand.execute(destination_ip, "cat " + newContainerLocation + " | docker import - " + container_id + ":new");
-            return 1;
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
-            return 0;
         }
     }
     
     @Override
-    public int createContainer() throws IOException {
+    public void createContainer() throws IOException {
         String destination_ip = container.get("destinationIp").getAsString();
         String image = container.get("image").getAsString();
         try { 
             ExecuteCommand.execute(destination_ip, "docker run " + image);
-            return 1;
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
         }
     }
     
     @Override
-    public int renameContainer() throws IOException{
+    public void renameContainer() throws IOException{
         String container_id = container.get("id").getAsString();
         String server_ip = getIPFromContainerID(container_id);
         String newName = container.get("newName").getAsString();
         try { 
             ExecuteCommand.execute(server_ip, "docker rename "+container_id+" "+newName);
-            return 1;
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
         }
     }
 
