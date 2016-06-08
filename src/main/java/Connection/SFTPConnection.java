@@ -49,12 +49,12 @@ public class SFTPConnection {
 	    final String src = downloadPath + File.separator + fileName+".tar";
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
-                if(Tools.searchInConnections(destinationHost) == null){
+                if(Tools.searchUploadPath(destinationHost) == null){
                     LOGGER.warning("Can not find the server");
                     return;
                 }
                     
-                sftp.put(new FileSystemFile(src), Tools.searchInConnections(destinationHost).getUploadPath());
+                sftp.put(new FileSystemFile(src), Tools.searchUploadPath(destinationHost).getUploadPath());
                 LOGGER.info("The file was successfully downloaded");
                 
             } catch(Exception e) {

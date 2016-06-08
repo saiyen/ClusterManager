@@ -1,8 +1,8 @@
 package nl.hogeschool.ClusterManager;
 
+import Models.ServerModel;
 import java.util.List;
 import Interfaces.IDataFormatChooser;
-import Models.ContainerModel;
 
 public class DataFormatConverter {
 
@@ -14,7 +14,7 @@ public class DataFormatConverter {
     }
 
     //use the strategy
-    public void useStrategyToFormatData(List<ContainerModel> containers) {
-        strategy.convertToDataFormat(containers);
+    public void useStrategyToFormatData(List<ServerModel> servers) {
+        strategy.convertToDataFormat(servers);
     }
 }

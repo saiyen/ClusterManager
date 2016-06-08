@@ -1,9 +1,17 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Models;
 
+/**
+ *
+ * @author ivan
+ */
 public class SSHConnectionModel {
     private String user;
     private String host;
-    private String hostname;
     private int port;
     private String passphrase;    
     private String uploadPath;
@@ -11,8 +19,7 @@ public class SSHConnectionModel {
     public SSHConnectionModel() {
     }
 
-    public SSHConnectionModel(String user, String host, String hostname ,int port, String passphrase, String uploadPath) {
-        this.hostname = hostname;
+    public SSHConnectionModel(String user, String host, int port, String passphrase, String uploadPath) {
         this.user = user;
         this.host = host;
         this.port = port;
@@ -60,19 +67,5 @@ public class SSHConnectionModel {
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
     }  
-
-    /**
-     * @return the hostname
-     */
-    public String getHostname() {
-        return hostname;
-    }
-
-    /**
-     * @param hostname the hostname to set
-     */
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
     
 }

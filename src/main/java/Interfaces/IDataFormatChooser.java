@@ -1,8 +1,8 @@
 package Interfaces;
 
-import Models.ContainerModel;
+import Models.ServerModel;
 import java.util.List;
 
-public interface IDataFormatChooser<T> {
-    T convertToDataFormat(List<ContainerModel> servers);
+public interface IDataFormatChooser {
+    public void convertToDataFormat(List<ServerModel> servers);
 }

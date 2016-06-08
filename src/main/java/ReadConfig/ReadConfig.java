@@ -45,13 +45,11 @@ public class ReadConfig {
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
 
-                   CONNECTION_DATA.add(new SSHConnectionModel(
-                                    eElement.getElementsByTagName("user").item(0).getTextContent(),
-                                    eElement.getElementsByTagName("host").item(0).getTextContent(),
-                                    eElement.getAttribute("sname"),
-                                    Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent()),
-                                    eElement.getElementsByTagName("passphrase").item(0).getTextContent(),
-                                    eElement.getElementsByTagName("upload").item(0).getTextContent()));
+                    CONNECTION_DATA.add(new SSHConnectionModel(eElement.getElementsByTagName("user").item(0).getTextContent(),
+                                        eElement.getElementsByTagName("host").item(0).getTextContent(),
+                                        Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent()),
+                                        eElement.getElementsByTagName("passphrase").item(0).getTextContent(),
+                                        eElement.getElementsByTagName("upload").item(0).getTextContent()));
                 }
             }
       } catch (Exception e) {
