@@ -3,11 +3,11 @@ package Interfaces;
 import java.io.IOException;
 
 public interface IContainerRunner {
-    void startContainer() throws IOException;
-    void stopContainer() throws IOException;
-    void removeContainer() throws IOException;
-    void moveContainer() throws IOException;
-    void renameContainer() throws IOException;
-    void createContainer() throws IOException;
+    int startContainer() throws IOException;
+    int stopContainer() throws IOException;
+    int removeContainer() throws IOException;
+    int moveContainer() throws IOException;
+    int renameContainer() throws IOException;
+    int createContainer() throws IOException;
     void getAllContainers() throws IOException, InterruptedException;
 }
