@@ -6,12 +6,10 @@ import java.util.List;
 public class ServerModel {
     private String hostname;
     private String IPAddress;
-    private List<ContainerModel> containers = new ArrayList<ContainerModel>();
     
-    public ServerModel(String IPAddress, List<ContainerModel> containers){
+    public ServerModel(String IPAddress, String hostname){
         this.hostname = hostname;
-        this.IPAddress = IPAddress;
-        this.containers = containers;   
+        this.IPAddress = IPAddress;   
     }
 
     /**
@@ -40,19 +38,5 @@ public class ServerModel {
      */
     public void setIPAddress(String IPAddress) {
         this.IPAddress = IPAddress;
-    }
-
-    /**
-     * @return the Containers
-     */
-    public List<ContainerModel> getContainers() {
-        return containers;
-    }
-
-    /**
-     * @param Containers the Containers to set
-     */
-    public void setContainers(List<ContainerModel> Containers) {
-        this.containers = Containers;
     }
 }
