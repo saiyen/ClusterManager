@@ -1,8 +1,10 @@
 package Interfaces;
 
 import java.io.IOException;
+import org.json.simple.JSONObject;
 
-public interface IContainerRunner {
+public interface ContainerManager {
+    void setJson(JSONObject data);
     int startContainer() throws IOException;
     int stopContainer() throws IOException;
     int removeContainer() throws IOException;

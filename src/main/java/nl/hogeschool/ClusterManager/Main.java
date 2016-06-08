@@ -5,11 +5,16 @@ import Logger.LoggerSetup;
 import ReadConfig.ReadConfig;
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import API.APICore;
 
 
 public class Main {
     
     public static void main(String[] Args) throws InterruptedException {   
+        
+        APICore api = new APICore();
+        
+        api.requests();
         
         try {
             LoggerSetup.setup();
@@ -17,11 +22,15 @@ public class Main {
             ReadConfig.getConnections();
             SSHConnection.makeConnections();
             
-            ListHelper listHelper = new ListHelper();
-            JsonObject container = new JsonObject();
-            DockerContainerManager docker = new DockerContainerManager(container);
-            docker.getAllContainers();
-            Client.sendToAPI("JSONObject", listHelper.getListOfServersAndContainers());
+            // API should use this to create a ContainerManager
+            String containerTypeOfJsonObject = "Docker";
+            if ("Docker".equals(containerTypeOfJsonObject)) {
+                SystemAdministrator systemAdministrator1 = new SystemAdministrator(containerTypeOfJsonObject);
+                systemAdministrator1.containerManager.getAllContainers();
+                systemAdministrator1.containerManager.startContainer();
+                systemAdministrator1.setDataFormatStrategy(new DataFormat.JsonConverter());
+                systemAdministrator1.useStrategyToFormatData(ListHelper.getListOfServersAndContainers());
+            }
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());

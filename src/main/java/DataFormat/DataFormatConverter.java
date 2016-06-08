@@ -1,15 +1,15 @@
-package nl.hogeschool.ClusterManager;
+package DataFormat;
 
 import Models.ServerModel;
 import java.util.List;
-import Interfaces.IDataFormatChooser;
+import Interfaces.DataFormatType;
 
 public class DataFormatConverter {
 
-    private IDataFormatChooser strategy;
+    private DataFormatType strategy;
 
     //this can be set at runtime by the application preferences
-    public void setDataFormatStrategy(IDataFormatChooser strategy) {
+    public void setDataFormatStrategy(DataFormatType strategy) {
         this.strategy = strategy;
     }
 

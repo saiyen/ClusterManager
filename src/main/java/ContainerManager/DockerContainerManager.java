@@ -1,6 +1,5 @@
-package nl.hogeschool.ClusterManager;
+package ContainerManager;
 
-import Interfaces.IContainerRunner;
 import Models.ServerModel;
 import Models.ContainerModel;
 import Connection.ExecuteCommand;
@@ -15,20 +14,25 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.schmizz.sshj.SSHClient;
+import Interfaces.ContainerManager;
+import nl.hogeschool.ClusterManager.ListHelper;
+import nl.hogeschool.ClusterManager.Tools;
+import org.json.simple.JSONObject;
 
-public class DockerContainerManager implements IContainerRunner {
-    private final JsonObject container;
+public class DockerContainerManager implements ContainerManager {
+    private JSONObject apiData;
     private List<ServerModel> listOfServersWithContainers = null;
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    
-    public DockerContainerManager(JsonObject container) {
-        this.container = container;
-    }
 
+    @Override
+    public void setJson(JSONObject data) {
+        apiData = data;
+    }
+    
     @Override
     public int startContainer() throws IOException {
         try {
-            String container_id = container.get("id").getAsString();
+            String container_id = apiData.get("cId").getAsString();
             String server_ip = getIPFromContainerID(container_id);
             ExecuteCommand.execute(server_ip, "docker start " + container_id);
             return 1;
@@ -44,7 +48,7 @@ public class DockerContainerManager implements IContainerRunner {
             String container_id = container.get("id").getAsString();
             String server_ip = getIPFromContainerID(container_id);
             ExecuteCommand.execute(server_ip, "docker stop " + container_id);
-            return 1; 
+            return 1;
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
             return 0;

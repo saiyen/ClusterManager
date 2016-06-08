@@ -9,8 +9,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import nl.hogeschool.ClusterManager.ListHelper;
-import nl.hogeschool.ClusterManager.DockerContainerManager;
+import ContainerManager.DockerContainerManager;
 import static spark.Spark.*;
+import Interfaces.ContainerManager;
 /**
  *
  * @author Ivan Ivanov
@@ -21,16 +22,15 @@ public class ContainerAPI {
         JsonParser parser = new JsonParser();
          
         get("/getAllContainers", (req, res) -> {
-            Gson gson = new Gson();
-            ContainerManager docker = new DockerContainerManager(new JsonObject());
-            ListHelper.getListOfServersAndContainers().clear();
+            ContainerManager docker = new DockerContainerManager();
             docker.getAllContainers();
+            Gson gson = new Gson();
             return gson.toJson(ListHelper.getListOfServersAndContainers());
         });
         
         post("/startContainer", (request, response) -> {
             JsonObject containerInfo = parser.parse(request.body()).getAsJsonObject();
-            DockerContainerManager docker = new DockerContainerManager(containerInfo);
+            DockerContainerManager docker = new DockerContainerManager();
             docker.getAllContainers();
             docker.startContainer();
             return "{\"status\": \"OK\"}";
@@ -38,7 +38,7 @@ public class ContainerAPI {
         
         post("/stopContainer", (request, response) -> {
             JsonObject containerInfo = parser.parse(request.body()).getAsJsonObject();
-            DockerContainerManager docker = new DockerContainerManager(containerInfo);
+            DockerContainerManager docker = new DockerContainerManager();
             docker.getAllContainers();
             docker.stopContainer();
             return "{\"status\": \"OK\"}";
@@ -46,7 +46,7 @@ public class ContainerAPI {
         
         post("/createContainer", (request, response) -> {
             JsonObject containerInfo = parser.parse(request.body()).getAsJsonObject();
-            DockerContainerManager docker = new DockerContainerManager(containerInfo);
+            DockerContainerManager docker = new DockerContainerManager();
             docker.getAllContainers();
             docker.createContainer();
             return "{\"status\": \"OK\"}";
@@ -54,7 +54,7 @@ public class ContainerAPI {
         
         post("/removeContainer", (request, response) -> {
             JsonObject containerInfo = parser.parse(request.body()).getAsJsonObject();
-            DockerContainerManager docker = new DockerContainerManager(containerInfo);
+            DockerContainerManager docker = new DockerContainerManager();
             docker.getAllContainers();
             docker.removeContainer();
             return "{\"status\": \"OK\"}";
@@ -62,7 +62,7 @@ public class ContainerAPI {
         
         post("/moveContainer", "application/json", (request, response) -> {
             JsonObject containerInfo = parser.parse(request.body()).getAsJsonObject();
-            DockerContainerManager docker = new DockerContainerManager(containerInfo);
+            DockerContainerManager docker = new DockerContainerManager();
             docker.getAllContainers();
             docker.moveContainer();
             return "{\"status\": \"OK\"}";
@@ -70,7 +70,7 @@ public class ContainerAPI {
         
         post("/renameContainer", "application/json", (request, response) -> {
             JsonObject containerInfo = parser.parse(request.body()).getAsJsonObject();
-            DockerContainerManager docker = new DockerContainerManager(containerInfo);
+            DockerContainerManager docker = new DockerContainerManager();
             docker.getAllContainers();
             docker.renameContainer();
             return "{\"status\": \"OK\"}";
