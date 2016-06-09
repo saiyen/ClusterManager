@@ -41,16 +41,17 @@ public class JsonConverter implements Interfaces.DataFormatType {
                 for (ContainerModel container : server.getContainers()) {
                     JsonArray containerArray = new JsonArray();
                     JsonObject containerObject = new JsonObject();
+                    containerObject.addProperty("cId", container.getContainerID());
                     containerObject.addProperty("name", container.getContainerName());
+                    containerObject.addProperty("status", container.getContainerStatus());
+                    containerObject.addProperty("image", container.getContainerImage());
+                    containerObject.addProperty("command", container.getContainerCommand());
                     containerArray.add(containerObject);
                     serverPLusContainer.add("container" + containerCount, containerArray);
                     containerCount++;
                 }
-
-                //serverPLusContainer.add("container" + containerCount, containerArray);
                 serverPlusContainersArray.add(serverPLusContainer);
                 allServersData.add("server" + count, serverPlusContainersArray);
-
                 count++;
             }
 

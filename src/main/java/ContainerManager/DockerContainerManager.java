@@ -140,7 +140,7 @@ public class DockerContainerManager implements ContainerManager {
         for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
             String tempServerIP = client.getKey();
             InputStream resultOfExecute = ExecuteCommand.execute(tempServerIP, "docker ps -a");
-            ListHelper.addOutputToList(resultOfExecute, tempServerIP);
+            ListHelper.addOutputToList(resultOfExecute, tempServerIP,"Docker");
         }
     }
 

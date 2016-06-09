@@ -7,13 +7,15 @@ public class ContainerModel{
     private String containerStatus;
     private String containerImage;
     private String containerCommand;
+    private String containerType;
 
-    public ContainerModel(String containerID, String containerName, String containerStatus, String containerImage, String containerCommand){
+    public ContainerModel(String containerID, String containerName, String containerStatus, String containerImage, String containerCommand, String containerType){
         this.containerID = containerID;
         this.containerName = containerName;
         this.containerStatus = containerStatus;
         this.containerImage = containerImage;
         this.containerCommand = containerCommand;
+        this.containerType = containerType;
     }
     
         /**
@@ -84,5 +86,19 @@ public class ContainerModel{
      */
     public void setContainerCommand(String containerCommand) {
         this.containerCommand = containerCommand;
+    }
+
+    /**
+     * @return the containerType
+     */
+    public String getContainerType() {
+        return containerType;
+    }
+
+    /**
+     * @param containerType the containerType to set
+     */
+    public void setContainerType(String containerType) {
+        this.containerType = containerType;
     }
 }
