@@ -37,7 +37,7 @@ public class ListHelper {
             String current_name = elements[5];
 
             // Save these values in the class Server which has all the containers
-            CONTAINERS.add(new ContainerModel(current_ID, current_name, current_status, current_image));
+            CONTAINERS.add(new ContainerModel(current_ID, current_name, current_status, current_image, current_cmd));
         }
         ALL_SERVERS.add(new ServerModel(server_IP, CONTAINERS));
     }

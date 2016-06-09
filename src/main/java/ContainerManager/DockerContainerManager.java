@@ -5,7 +5,6 @@ import Models.ContainerModel;
 import Connection.ExecuteCommand;
 import Connection.SFTPConnection;
 import Connection.SSHConnection;
-import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -32,8 +31,8 @@ public class DockerContainerManager implements ContainerManager {
     @Override
     public int startContainer() throws IOException {
         try {
-            String container_id = apiData.get("cId").getAsString();
-            String server_ip = getIPFromContainerID(container_id);
+            String container_id = apiData.get("cId").toString();
+            String server_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
             ExecuteCommand.execute(server_ip, "docker start " + container_id);
             return 1;
         } catch (InterruptedException ex) {
@@ -45,8 +44,8 @@ public class DockerContainerManager implements ContainerManager {
     @Override
     public int stopContainer() throws IOException {
         try {
-            String container_id = container.get("id").getAsString();
-            String server_ip = getIPFromContainerID(container_id);
+            String container_id = apiData.get("cId").toString(); 
+            String server_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
             ExecuteCommand.execute(server_ip, "docker stop " + container_id);
             return 1;
         } catch (InterruptedException ex) {
@@ -58,8 +57,8 @@ public class DockerContainerManager implements ContainerManager {
     @Override
     public int removeContainer() throws IOException {
         try {
-            String container_id = container.get("id").getAsString();
-            String server_ip = getIPFromContainerID(container_id);
+            String container_id = apiData.get("cId").toString();
+            String server_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
             ExecuteCommand.execute(server_ip, "docker rm " + container_id);
             return 1;
         } catch (InterruptedException ex) {
@@ -71,9 +70,9 @@ public class DockerContainerManager implements ContainerManager {
     @Override
     public int moveContainer() throws IOException {
         try {
-            String container_id = container.get("id").getAsString();
-            String home_ip = getIPFromContainerID(container_id);
-            String destination_ip = container.get("destinationIp").getAsString();
+            String container_id = apiData.get("cId").toString();
+            String home_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
+            String destination_ip = apiData.get("destination").toString();
             String oldContainerLocation;
             String newContainerLocation;
                     
@@ -97,7 +96,9 @@ public class DockerContainerManager implements ContainerManager {
             ExecuteCommand.execute(home_ip, "docker export --output=\"" + oldContainerLocation + "\" " + container_id);
             sftpTransfer.downloadFile(home_ip, container_id);
             sftpTransfer.uploadFile(destination_ip, container_id);
-            ExecuteCommand.execute(destination_ip, "cat " + newContainerLocation + " | docker import - " + container_id + ":new");
+            ExecuteCommand.execute(destination_ip, "cat " + newContainerLocation + " | docker import - " + container_id + ":latest");
+            ExecuteCommand.execute(destination_ip, "docker run "+container_id + ":latest "+getServerAndContainerInfoByContainerID(container_id).get("command"));
+            
             return 1;
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
@@ -107,8 +108,8 @@ public class DockerContainerManager implements ContainerManager {
     
     @Override
     public int createContainer() throws IOException {
-        String destination_ip = container.get("destinationIp").getAsString();
-        String image = container.get("image").getAsString();
+        String destination_ip = apiData.get("destination").toString();
+        String image = apiData.get("image").toString();
         try { 
             ExecuteCommand.execute(destination_ip, "docker run " + image);
             return 1;
@@ -120,9 +121,9 @@ public class DockerContainerManager implements ContainerManager {
     
     @Override
     public int renameContainer() throws IOException{
-        String container_id = container.get("id").getAsString();
-        String server_ip = getIPFromContainerID(container_id);
-        String newName = container.get("newName").getAsString();
+        String container_id = apiData.get("cId").toString();
+        String server_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
+        String newName = apiData.get("newName").toString();
         try { 
             ExecuteCommand.execute(server_ip, "docker rename "+container_id+" "+newName);
             return 1;
@@ -143,23 +144,25 @@ public class DockerContainerManager implements ContainerManager {
         }
     }
 
-    public String getIPFromContainerID(String containerID) {
+    @Override
+    public HashMap<String, String> getServerAndContainerInfoByContainerID(String containerID) {
         try {
             listOfServersWithContainers = ListHelper.getListOfServersAndContainers();
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
         }
-        
-        String server_ip = "";
+      
+        HashMap<String, String> containerElements = new HashMap();
         for (ServerModel server : listOfServersWithContainers) {
             for (ContainerModel theContainer : server.getContainers()) {
                 if (theContainer.getContainerID().contains(containerID)) {
-                    server_ip = server.getIPAddress();
+                    String server_ip = server.getIPAddress();
+                    String command = theContainer.getContainerCommand();
+                    containerElements.put("ip", server_ip);
+                    containerElements.put("command", command);
                 }
             }
         }
-
-        return server_ip;
-        
+        return containerElements;
     }
 }

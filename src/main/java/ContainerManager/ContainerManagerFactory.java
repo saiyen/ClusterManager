@@ -11,9 +11,6 @@ public class ContainerManagerFactory {
             case "Docker":
                 containerManager = new DockerContainerManager();
                 break;
-            case "Rocket":
-                containerManager = new RocketContainerManager();
-                break;
         }
         return containerManager;
     }

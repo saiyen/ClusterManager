@@ -23,14 +23,10 @@ public class Main {
             SSHConnection.makeConnections();
             
             // API should use this to create a ContainerManager
-            String containerTypeOfJsonObject = "Docker";
-            if ("Docker".equals(containerTypeOfJsonObject)) {
-                SystemAdministrator systemAdministrator1 = new SystemAdministrator(containerTypeOfJsonObject);
+                SystemAdministrator systemAdministrator1 = new SystemAdministrator("Docker");
                 systemAdministrator1.containerManager.getAllContainers();
-                systemAdministrator1.containerManager.startContainer();
                 systemAdministrator1.setDataFormatStrategy(new DataFormat.JsonConverter());
                 systemAdministrator1.useStrategyToFormatData(ListHelper.getListOfServersAndContainers());
-            }
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());

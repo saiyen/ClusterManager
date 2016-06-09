@@ -1,6 +1,7 @@
 package Interfaces;
 
 import java.io.IOException;
+import java.util.HashMap;
 import org.json.simple.JSONObject;
 
 public interface ContainerManager {
@@ -12,4 +13,5 @@ public interface ContainerManager {
     int renameContainer() throws IOException;
     int createContainer() throws IOException;
     void getAllContainers() throws IOException, InterruptedException;
+    HashMap<String, String> getServerAndContainerInfoByContainerID(String containerID);
 }

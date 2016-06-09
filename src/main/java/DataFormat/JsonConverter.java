@@ -7,7 +7,6 @@ package DataFormat;
 
 import Models.ContainerModel;
 import Models.ServerModel;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -25,9 +24,7 @@ public class JsonConverter implements Interfaces.DataFormatType {
 
     @Override
     public void convertToDataFormat(List<ServerModel> servers) {
-
-        Gson gson = new Gson();
-
+        
         JsonObject jsonWrapper = new JsonObject();
         JsonArray jsonWrapperArray = new JsonArray();
         try {
@@ -39,13 +36,14 @@ public class JsonConverter implements Interfaces.DataFormatType {
                 JsonObject serverPLusContainer = new JsonObject();
 
                 serverPLusContainer.addProperty("ip", server.getIPAddress());
-
-                //JsonArray containerArray = new JsonArray();
+                
                 int containerCount = 0;
                 for (ContainerModel container : server.getContainers()) {
+                    JsonArray containerArray = new JsonArray();
                     JsonObject containerObject = new JsonObject();
                     containerObject.addProperty("name", container.getContainerName());
-                    serverPLusContainer.add("container" + containerCount, containerObject);
+                    containerArray.add(containerObject);
+                    serverPLusContainer.add("container" + containerCount, containerArray);
                     containerCount++;
                 }
 
@@ -63,11 +61,9 @@ public class JsonConverter implements Interfaces.DataFormatType {
             e.getMessage();
         }
 
-        try {
-            FileWriter fileWriter = new FileWriter("./src/main/resources/json/Containers.json");
+        try (FileWriter fileWriter = new FileWriter("./src/main/resources/json/Containers.json")) {
             fileWriter.write(jsonWrapper.toString());
             fileWriter.flush();
-            fileWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(JsonConverter.class.getName()).log(Level.SEVERE, null, ex);
         }
