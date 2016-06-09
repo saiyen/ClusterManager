@@ -10,6 +10,7 @@ import spark.Filter;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
+import static spark.Spark.before;
 
 /**
  *
@@ -35,6 +36,6 @@ public final class CorsFilter {
                 });
             }
         };
-        Spark.after(filter);
+        before(filter);
     }
 }

@@ -2,7 +2,7 @@ package ContainerManager;
 
 import Models.ServerModel;
 import Models.ContainerModel;
-import Connection.ExecuteCommand;
+import nl.hogeschool.ClusterManager.ExecuteCommand;
 import Connection.SFTPConnection;
 import Connection.SSHConnection;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class DockerContainerManager implements ContainerManager {
             ExecuteCommand.execute(server_ip, "docker start " + container_id);
             return 1;
         } catch (InterruptedException ex) {
-            Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warning("Can't receive container id or server ip from the API: "+ex.getMessage());
             return 0;
         }
     }

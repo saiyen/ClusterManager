@@ -1,5 +1,6 @@
-package Connection;
+package nl.hogeschool.ClusterManager;
 
+import Connection.SSHConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
