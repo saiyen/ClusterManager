@@ -46,6 +46,7 @@ public class JsonConverter implements Interfaces.DataFormatType {
                     containerObject.addProperty("status", container.getContainerStatus());
                     containerObject.addProperty("image", container.getContainerImage());
                     containerObject.addProperty("command", container.getContainerCommand());
+                    containerObject.addProperty("cType", container.getContainerType());
                     containerArray.add(containerObject);
                     serverPLusContainer.add("container" + containerCount, containerArray);
                     containerCount++;
