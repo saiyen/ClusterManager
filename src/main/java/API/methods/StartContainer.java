@@ -31,7 +31,7 @@ public class StartContainer {
         
         startMap.put("name", name);
         startMap.put("cId", cId);
-        startMap.put("cId", cType);
+        startMap.put("cType", cType);
         
         JsonCreator creator = new JsonCreator(startMap);
         JSONObject createdJson = creator.createJson();
