@@ -34,6 +34,7 @@ public class DockerContainerManager implements ContainerManager {
             String container_id = apiData.get("cId").toString();
             String server_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
             ExecuteCommand.execute(server_ip, "docker start " + container_id);
+            getAllContainers();
             return 1;
         } catch (InterruptedException ex) {
             LOGGER.warning("Can't receive container id or server ip from the API: "+ex.getMessage());
@@ -47,6 +48,7 @@ public class DockerContainerManager implements ContainerManager {
             String container_id = apiData.get("cId").toString(); 
             String server_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
             ExecuteCommand.execute(server_ip, "docker stop " + container_id);
+            getAllContainers();
             return 1;
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -60,6 +62,7 @@ public class DockerContainerManager implements ContainerManager {
             String container_id = apiData.get("cId").toString();
             String server_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
             ExecuteCommand.execute(server_ip, "docker rm " + container_id);
+            getAllContainers();
             return 1;
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -99,6 +102,7 @@ public class DockerContainerManager implements ContainerManager {
             ExecuteCommand.execute(destination_ip, "cat " + newContainerLocation + " | docker import - " + container_id + ":latest");
             ExecuteCommand.execute(destination_ip, "docker run "+container_id + ":latest "+getServerAndContainerInfoByContainerID(container_id).get("command"));
             
+            getAllContainers();
             return 1;
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
@@ -112,6 +116,7 @@ public class DockerContainerManager implements ContainerManager {
         String image = apiData.get("image").toString();
         try { 
             ExecuteCommand.execute(destination_ip, "docker run " + image);
+            getAllContainers();
             return 1;
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -126,6 +131,7 @@ public class DockerContainerManager implements ContainerManager {
         String newName = apiData.get("newName").toString();
         try { 
             ExecuteCommand.execute(server_ip, "docker rename "+container_id+" "+newName);
+            getAllContainers();
             return 1;
         } catch (InterruptedException ex) {
             Logger.getLogger(DockerContainerManager.class.getName()).log(Level.SEVERE, null, ex);
