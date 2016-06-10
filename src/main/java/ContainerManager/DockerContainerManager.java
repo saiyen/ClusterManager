@@ -76,18 +76,18 @@ public class DockerContainerManager implements ContainerManager {
             String oldContainerLocation;
             String newContainerLocation;
                     
-            if(Tools.searchUploadPath(home_ip) == null){
+            if(Tools.searchInConnections(home_ip) == null){
                 LOGGER.warning("Can not find the server");
                 return 0;
             } else {
-                oldContainerLocation = Tools.searchUploadPath(home_ip).getUploadPath().concat(container_id +".tar");
+                oldContainerLocation = Tools.searchInConnections(home_ip).getUploadPath().concat(container_id +".tar");
             }
             
-            if(Tools.searchUploadPath(destination_ip) == null){
+            if(Tools.searchInConnections(destination_ip) == null){
                 LOGGER.warning("Can not find the server");
                 return 0;
             } else {
-                newContainerLocation = Tools.searchUploadPath(destination_ip).getUploadPath().concat(container_id +".tar");
+                newContainerLocation = Tools.searchInConnections(destination_ip).getUploadPath().concat(container_id +".tar");
             }
 
             SFTPConnection sftpTransfer = new SFTPConnection();

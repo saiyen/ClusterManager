@@ -12,15 +12,20 @@ import net.schmizz.sshj.transport.TransportException;
 public class ExecuteCommand {   
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     
+    //Overload
     public static InputStream execute(String server_ip, String command) throws IOException, InterruptedException {
         SSHClient currentHost = SSHConnection.getListOfClients().get(server_ip);
+        return execute(server_ip, command, currentHost);
+    }
+    
+    public static InputStream execute(String server_ip, String command, SSHClient client) throws IOException, InterruptedException {
         InputStream inputStreamOfCommand = null;
          
         try {
-            Session session = currentHost.startSession();
+            Session session = client.startSession();
             
             if(session == null) {
-                LOGGER.warning("Can not find session for host: " + server_ip);
+                LOGGER.warning("Can not create session for host: " + server_ip);
             } else {
                 try {
                     LOGGER.info("Session created for host: " + server_ip);
@@ -31,17 +36,13 @@ public class ExecuteCommand {
                 } finally {
                     Thread.sleep(1000);
                     session.close();
+                    LOGGER.info("Session closed;");
                 }
             } 
-        } catch(ConnectionException | TransportException e) {
+        } catch(Exception e) {
             LOGGER.warning(e.getMessage());
         }
+        
         return inputStreamOfCommand;
-    }
-    
-    public static String splitString(String words, int position){
-        String[] arrayOfStrings = words.split("\\s+");
-        String substring = arrayOfStrings[position];
-        return substring;
     }
 }

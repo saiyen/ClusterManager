@@ -2,7 +2,7 @@ package nl.hogeschool.ClusterManager;
 
 import Connection.SSHConnection;
 import Logger.LoggerSetup;
-import ReadConfig.ReadConfig;
+import Readers.ReadConfig;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import API.APICore;

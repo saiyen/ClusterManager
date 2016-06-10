@@ -1,6 +1,7 @@
 package Connection;
 
-import ReadConfig.ReadConfig;
+import Models.SSHConnectionModel;
+import Readers.ReadConfig;
 import java.io.File;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
@@ -23,6 +24,10 @@ public class SFTPConnection {
     }
     
     public void downloadFile(String hostname, String fileName) throws IOException {
+        if(!validateDownloadPath()) {
+            return;
+        }
+        
         SSHClient targetHost = SSHConnection.getListOfClients().get(hostname);
 
         try {
@@ -37,24 +42,30 @@ public class SFTPConnection {
                 LOGGER.info("SFTP connection closed.");
             }
         } catch (Exception e){
-            System.out.println(e.getMessage());
             LOGGER.warning("Can not make SFTP connection because of: " + e.getMessage());
         } 
     }
     
     public void uploadFile(String destinationHost,String fileName) throws IOException {
+        if(!validateDownloadPath()) {
+            return;
+        }
+        
         SSHClient targetHost = SSHConnection.getListOfClients().get(destinationHost);
         
         try {                         
 	    final String src = downloadPath + File.separator + fileName+".tar";
             final SFTPClient sftp = targetHost.newSFTPClient();
             try {
-                if(Tools.searchUploadPath(destinationHost) == null){
+                
+                SSHConnectionModel destinationModel = Tools.searchInConnections(destinationHost);
+                
+                if(destinationModel == null){
                     LOGGER.warning("Can not find the server");
                     return;
                 }
                     
-                sftp.put(new FileSystemFile(src), Tools.searchUploadPath(destinationHost).getUploadPath());
+                sftp.put(new FileSystemFile(src), destinationModel.getUploadPath());
                 LOGGER.info("The file was successfully downloaded");
                 
             } catch(Exception e) {
@@ -66,6 +77,15 @@ public class SFTPConnection {
         } catch(Exception e) {
             LOGGER.warning("Can not make SFTP connection because of: " + e.getMessage());
         } 
+    }
+    
+    private boolean validateDownloadPath() {
+        if(downloadPath == null) {
+            LOGGER.warning("Downlaod path is null");
+            return false;
+        }
+        
+        return true;
     }
             
 }

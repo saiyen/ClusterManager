@@ -6,17 +6,17 @@
 package nl.hogeschool.ClusterManager;
 
 import Models.SSHConnectionModel;
-import ReadConfig.ReadConfig;
+import Readers.ReadConfig;
 
 /**
  *
  * @author Ivan Ivanov
  */
 public class Tools {
-    public static SSHConnectionModel searchUploadPath(String hostname) {
-        for (SSHConnectionModel uploadPath : ReadConfig.getConnections()) {
-            if(hostname.equals(uploadPath.getHost()))
-                return uploadPath;
+    public static SSHConnectionModel searchInConnections(String hostname) {
+        for (SSHConnectionModel connectionModel : ReadConfig.getConnections()) {
+            if(hostname.equals(connectionModel.getHost()))
+                return connectionModel;
         }
         
         return null;

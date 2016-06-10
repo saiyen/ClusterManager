@@ -1,37 +1,34 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package ReadConfig;
+package Readers;
 
 import Models.ConfigModel;
 import Models.SSHConnectionModel;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
-import java.io.File;
 import java.util.ArrayList;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.Properties;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-/**
- *
- * @author ivan
- */
 public class ReadConfig {
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static ArrayList<SSHConnectionModel> CONNECTION_DATA = null;
     private static ConfigModel CONFIG_DATA = null;
+    private static final String CONNECTION_XML_PATH = "./src/main/resources/ConnectionsConfig.xml";
+    private static final String PROPERTIES_PATH = "Config.properties";
     
     private static void readConnections() {
         try {	
             CONNECTION_DATA = new ArrayList<>();
-            File inputFile = new File("./src/main/resources/ConnectionsConfig.xml");
+            File inputFile = new File(CONNECTION_XML_PATH);
+            
+            //File inputFile = new File();
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(inputFile);
@@ -45,15 +42,16 @@ public class ReadConfig {
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
 
-                    CONNECTION_DATA.add(new SSHConnectionModel(eElement.getElementsByTagName("user").item(0).getTextContent(),
-                                        eElement.getElementsByTagName("host").item(0).getTextContent(),
-                                        Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent()),
-                                        eElement.getElementsByTagName("passphrase").item(0).getTextContent(),
-                                        eElement.getElementsByTagName("upload").item(0).getTextContent()));
+                CONNECTION_DATA.add(new SSHConnectionModel(
+                                    eElement.getElementsByTagName("user").item(0).getTextContent(),
+                                    eElement.getElementsByTagName("host").item(0).getTextContent(),
+                                    Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent()),
+                                    eElement.getElementsByTagName("passphrase").item(0).getTextContent(),
+                                    eElement.getElementsByTagName("upload").item(0).getTextContent()));
                 }
             }
       } catch (Exception e) {
-         e.printStackTrace();
+            LOGGER.warning(e.getMessage());
       }
     }
     
@@ -62,14 +60,13 @@ public class ReadConfig {
         try {
             CONFIG_DATA = new ConfigModel();
             Properties prop = new Properties();
-            String propFileNeme = "Config.properties";
             
-            inputStream = ReadConfig.class.getClassLoader().getResourceAsStream(propFileNeme);
+            inputStream = ReadConfig.class.getClassLoader().getResourceAsStream(PROPERTIES_PATH);
             
             if (inputStream != null) {
                 prop.load(inputStream);
             } else {
-                throw new FileNotFoundException("property file '" + propFileNeme + "' not fount in the classpath");
+                throw new FileNotFoundException("property file '" + PROPERTIES_PATH + "' not fount in the classpath");
             }
             
             CONFIG_DATA.setKeyPath(prop.getProperty("private-key-path"));
@@ -77,7 +74,7 @@ public class ReadConfig {
             CONFIG_DATA.setDownloadFolderPath(prop.getProperty("download-folder"));
             
         } catch (Exception e) {
-            System.out.println("Exception: " + e);
+            LOGGER.warning(e.getMessage());
         } finally {
             inputStream.close();
         }
