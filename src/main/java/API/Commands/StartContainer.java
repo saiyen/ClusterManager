@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package API.methods;
+package API.Commands;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,28 +15,25 @@ import org.json.simple.JSONObject;
  *
  * @author absentium
  */
-public class RenameContainer {
-    private String name;
+public class StartContainer {
     private String cId;
+    private String name;
     private String cType;
-    private String newName;
     
-    public RenameContainer(String name, String cId, String cType, String newName){
-        this.name = name;
+    public StartContainer(String name, String cId, String cType){
         this.cId = cId;
+        this.name = name;
         this.cType = cType;
-        this.newName = newName;
     }
     
-    public String sendName(){
-        Map<String, String> renameMap = new HashMap<>();
+    public String startIt (){
+        Map<String, String> startMap = new HashMap<>();
         
-        renameMap.put("name", name);
-        renameMap.put("cType", cType);
-        renameMap.put("cId", cId);
-        renameMap.put("newName", newName);
+        startMap.put("name", name);
+        startMap.put("cId", cId);
+        startMap.put("cType", cType);
         
-        JsonCreator creator = new JsonCreator(renameMap);
+        JsonCreator creator = new JsonCreator(startMap);
         JSONObject createdJson = creator.createJson();
         
         CommandSender sender = new CommandSender(createdJson);
@@ -45,9 +42,9 @@ public class RenameContainer {
         String returnText = "";
         
         if(result == 1) {
-            returnText += "The name has been changed successfully";
+            returnText += "The container with id " + cId + " has been started successfully.";
         } else {
-            returnText += "The name could not be changed";
+            returnText += "The container with id " + cId + " could not be started.";
         }
         
         return returnText;

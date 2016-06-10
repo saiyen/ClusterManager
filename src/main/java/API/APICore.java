@@ -5,13 +5,7 @@
  */
 package API;
 
-import API.methods.CreateContainer;
-import API.methods.RemoveContainer;
-import API.methods.MoveContainer;
-import API.methods.StopContainer;
-import API.methods.RenameContainer;
-import API.methods.GetServers;
-import API.methods.StartContainer;
+import API.Commands.*;
 import static spark.Spark.*;
 import API.Cors.CorsFilter;
 

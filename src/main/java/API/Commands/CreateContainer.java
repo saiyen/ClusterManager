@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package API.methods;
+package API.Commands;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,28 +15,28 @@ import org.json.simple.JSONObject;
  *
  * @author absentium
  */
-public class MoveContainer {
-    private String cId;
+public class CreateContainer {
+    private String image;
     private String name;
     private String cType;
     private String destination;
     
-    public MoveContainer(String name, String cId, String cType, String destination){
+    public CreateContainer(String name, String cType, String destination, String image){
         this.name = name;
-        this.cId = cId;
         this.cType = cType;
         this.destination = destination;
+        this.image = image;
     }
     
-    public String moveIt(){
-        Map<String,String> moveMap = new HashMap<>();
+    public String createIt(){
+        Map<String,String> createMap = new HashMap<>();
         
-        moveMap.put("name", name);
-        moveMap.put("cId", cId);
-        moveMap.put("cType", cType);
-        moveMap.put("destination", destination);
+        createMap.put("name", name);
+        createMap.put("image", image);
+        createMap.put("cType", cType);
+        createMap.put("destination", destination);
         
-        JsonCreator creator = new JsonCreator(moveMap);
+        JsonCreator creator = new JsonCreator(createMap);
         JSONObject createdJson = creator.createJson();
         
         CommandSender sender = new CommandSender(createdJson);
@@ -45,9 +45,9 @@ public class MoveContainer {
         String returnText = "";
         
         if(result == 1) {
-            returnText += "The container with id " + cId + " has been moved to " + destination + " successfully.";
+            returnText += "The new container has been created successfully.";
         } else {
-            returnText += "The container with id " + cId + " could not be stopped.";
+            returnText += "The new container could not be created.";
         }
         
         return returnText;

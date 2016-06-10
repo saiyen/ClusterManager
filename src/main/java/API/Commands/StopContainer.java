@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package API.methods;
+package API.Commands;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,25 +15,25 @@ import org.json.simple.JSONObject;
  *
  * @author absentium
  */
-public class StartContainer {
+public class StopContainer {
     private String cId;
     private String name;
     private String cType;
     
-    public StartContainer(String name, String cId, String cType){
+    public StopContainer(String name, String cId, String cType){
         this.cId = cId;
         this.name = name;
         this.cType = cType;
     }
     
-    public String startIt (){
-        Map<String, String> startMap = new HashMap<>();
+    public String stopIt (){
+        Map<String, String> stopMap = new HashMap<>();
         
-        startMap.put("name", name);
-        startMap.put("cId", cId);
-        startMap.put("cType", cType);
+        stopMap.put("name", name);
+        stopMap.put("cId", cId);
+        stopMap.put("cType", cType);
         
-        JsonCreator creator = new JsonCreator(startMap);
+        JsonCreator creator = new JsonCreator(stopMap);
         JSONObject createdJson = creator.createJson();
         
         CommandSender sender = new CommandSender(createdJson);
@@ -42,9 +42,9 @@ public class StartContainer {
         String returnText = "";
         
         if(result == 1) {
-            returnText += "The container with id " + cId + " has been started successfully.";
+            returnText += "The container with id " + cId + " has been stopped successfully.";
         } else {
-            returnText += "The container with id " + cId + " could not be started.";
+            returnText += "The container with id " + cId + " could not be stopped.";
         }
         
         return returnText;

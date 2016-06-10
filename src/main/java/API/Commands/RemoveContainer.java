@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package API.methods;
+package API.Commands;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,28 +15,25 @@ import org.json.simple.JSONObject;
  *
  * @author absentium
  */
-public class CreateContainer {
-    private String image;
+public class RemoveContainer {
+    private String cId;
     private String name;
     private String cType;
-    private String destination;
     
-    public CreateContainer(String name, String cType, String destination, String image){
+    public RemoveContainer(String name, String cId, String cType){
+        this.cId = cId;
         this.name = name;
         this.cType = cType;
-        this.destination = destination;
-        this.image = image;
     }
     
-    public String createIt(){
-        Map<String,String> createMap = new HashMap<>();
+    public String removeIt (){
+        Map<String, String> removeMap = new HashMap<>();
         
-        createMap.put("name", name);
-        createMap.put("image", image);
-        createMap.put("cType", cType);
-        createMap.put("destination", destination);
+        removeMap.put("name", name);
+        removeMap.put("cId", cId);
+        removeMap.put("cType", cType);
         
-        JsonCreator creator = new JsonCreator(createMap);
+        JsonCreator creator = new JsonCreator(removeMap);
         JSONObject createdJson = creator.createJson();
         
         CommandSender sender = new CommandSender(createdJson);
@@ -45,9 +42,9 @@ public class CreateContainer {
         String returnText = "";
         
         if(result == 1) {
-            returnText += "The new container has been created successfully.";
+            returnText += "The container with id " + cId + " has been removed successfully.";
         } else {
-            returnText += "The new container could not be created.";
+            returnText += "The container with id " + cId + " could not be removed.";
         }
         
         return returnText;

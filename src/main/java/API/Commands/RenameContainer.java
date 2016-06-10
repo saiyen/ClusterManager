@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package API.methods;
+package API.Commands;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,25 +15,28 @@ import org.json.simple.JSONObject;
  *
  * @author absentium
  */
-public class StopContainer {
-    private String cId;
+public class RenameContainer {
     private String name;
+    private String cId;
     private String cType;
+    private String newName;
     
-    public StopContainer(String name, String cId, String cType){
-        this.cId = cId;
+    public RenameContainer(String name, String cId, String cType, String newName){
         this.name = name;
+        this.cId = cId;
         this.cType = cType;
+        this.newName = newName;
     }
     
-    public String stopIt (){
-        Map<String, String> stopMap = new HashMap<>();
+    public String sendName(){
+        Map<String, String> renameMap = new HashMap<>();
         
-        stopMap.put("name", name);
-        stopMap.put("cId", cId);
-        stopMap.put("cType", cType);
+        renameMap.put("name", name);
+        renameMap.put("cType", cType);
+        renameMap.put("cId", cId);
+        renameMap.put("newName", newName);
         
-        JsonCreator creator = new JsonCreator(stopMap);
+        JsonCreator creator = new JsonCreator(renameMap);
         JSONObject createdJson = creator.createJson();
         
         CommandSender sender = new CommandSender(createdJson);
@@ -42,9 +45,9 @@ public class StopContainer {
         String returnText = "";
         
         if(result == 1) {
-            returnText += "The container with id " + cId + " has been stopped successfully.";
+            returnText += "The name has been changed successfully";
         } else {
-            returnText += "The container with id " + cId + " could not be stopped.";
+            returnText += "The name could not be changed";
         }
         
         return returnText;
