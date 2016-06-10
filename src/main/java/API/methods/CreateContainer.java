@@ -16,15 +16,13 @@ import org.json.simple.JSONObject;
  * @author absentium
  */
 public class CreateContainer {
-    private String port;
     private String image;
     private String name;
     private String cType;
     private String destination;
     
-    public CreateContainer(String name, String port, String cType, String destination, String image){
+    public CreateContainer(String name, String cType, String destination, String image){
         this.name = name;
-        this.port = port;
         this.cType = cType;
         this.destination = destination;
         this.image = image;
@@ -34,7 +32,6 @@ public class CreateContainer {
         Map<String,String> createMap = new HashMap<>();
         
         createMap.put("name", name);
-        createMap.put("port", port);
         createMap.put("image", image);
         createMap.put("cType", cType);
         createMap.put("destination", destination);

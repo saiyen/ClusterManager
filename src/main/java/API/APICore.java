@@ -73,7 +73,7 @@ public class APICore {
         
         // Create a new container on a specific server
         post("/create", (req, res) -> {
-            CreateContainer create = new CreateContainer(req.queryParams("name"), req.queryParams("cType"), req.queryParams("destination"), req.queryParams("image"), req.queryParams("port"));
+            CreateContainer create = new CreateContainer(req.queryParams("name"), req.queryParams("cType"), req.queryParams("destination"), req.queryParams("image"));
             
             String result = create.createIt();
             
