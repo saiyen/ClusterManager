@@ -29,16 +29,35 @@ public class ListHelper {
             // Divide each line per , or " " to split by Id, Name etc
 
             String[] elements = line.split("\\s{2,}");
-            String current_ID = elements[0];
-            String current_image = elements[1];
-            String current_cmd = elements[2];
-            String current_runtime = elements[3];
-            String current_status = elements[4];
-            String current_name = elements[5];
-            String current_containerType = containerType;
+            
+            if(elements.length == 6) {
+                String current_ID = elements[0];
+                String current_image = elements[1];
+                String current_cmd = elements[2];
+                String current_runtime = elements[3];
+                String current_status = elements[4];
+                String current_port = "";
+                String current_name = elements[5];
+                String current_containerType = containerType;
+                
+                // Save these values in the class Server which has all the containers
+                CONTAINERS.add(new ContainerModel(current_ID, current_name, current_status, current_image, current_cmd, current_containerType, current_port));
+            }
 
-            // Save these values in the class Server which has all the containers
-            CONTAINERS.add(new ContainerModel(current_ID, current_name, current_status, current_image, current_cmd, current_containerType));
+            if(elements.length == 7) {
+                String current_ID = elements[0];
+                String current_image = elements[1];
+                String current_cmd = elements[2];
+                String current_runtime = elements[3];
+                String current_status = elements[4];
+                String current_port = elements[5];
+                String current_name = elements[6];
+                String current_containerType = containerType;
+                
+                // Save these values in the class Server which has all the containers
+                CONTAINERS.add(new ContainerModel(current_ID, current_name, current_status, current_image, current_cmd, current_containerType, current_port));
+            }
+            
         }
         ALL_SERVERS.add(new ServerModel(server_IP, CONTAINERS));
     }

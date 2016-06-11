@@ -10,6 +10,7 @@ import Models.ServerModel;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -21,7 +22,8 @@ import java.util.logging.Logger;
  * @author chill
  */
 public class JsonConverter implements Interfaces.DataFormatType {
-
+    private final String FILE_PATH = "./src/main/resources/json/Containers.json";
+    
     @Override
     public void convertToDataFormat(List<ServerModel> servers) {
         
@@ -62,10 +64,13 @@ public class JsonConverter implements Interfaces.DataFormatType {
         } catch (JsonParseException e) {
             e.getMessage();
         }
-
-        try (FileWriter fileWriter = new FileWriter("./src/main/resources/json/Containers.json")) {
+                   
+        try {                
+            FileWriter fileWriter = new FileWriter(FILE_PATH, false);
+                        
             fileWriter.write(jsonWrapper.toString());
             fileWriter.flush();
+            fileWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(JsonConverter.class.getName()).log(Level.SEVERE, null, ex);
         }

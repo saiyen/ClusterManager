@@ -8,14 +8,16 @@ public class ContainerModel{
     private String containerImage;
     private String containerCommand;
     private String containerType;
+    private String containerPort;
 
-    public ContainerModel(String containerID, String containerName, String containerStatus, String containerImage, String containerCommand, String containerType){
+    public ContainerModel(String containerID, String containerName, String containerStatus, String containerImage, String containerCommand, String containerType, String containerPort){
         this.containerID = containerID;
         this.containerName = containerName;
         this.containerStatus = containerStatus;
         this.containerImage = containerImage;
         this.containerCommand = containerCommand;
         this.containerType = containerType;
+        this.containerPort = containerPort;
     }
     
         /**
@@ -101,4 +103,14 @@ public class ContainerModel{
     public void setContainerType(String containerType) {
         this.containerType = containerType;
     }
+
+    public String getContainerPort() {
+        return containerPort;
+    }
+
+    public void setContainerPort(String containerPort) {
+        this.containerPort = containerPort;
+    }
+    
+    
 }

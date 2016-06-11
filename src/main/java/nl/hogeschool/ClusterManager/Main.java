@@ -23,10 +23,11 @@ public class Main {
             SSHConnection.makeConnections();
             
             // API should use this to create a ContainerManager
-                SystemAdministrator systemAdministrator1 = new SystemAdministrator("Docker");
-                systemAdministrator1.containerManager.getAllContainers();
-                systemAdministrator1.setDataFormatStrategy(new DataFormat.JsonConverter());
-                systemAdministrator1.useStrategyToFormatData(ListHelper.getListOfServersAndContainers());
+            ListHelper.getListOfServersAndContainers().clear();
+            SystemAdministrator systemAdministrator1 = new SystemAdministrator("Docker");
+            systemAdministrator1.containerManager.getAllContainers();
+            systemAdministrator1.setDataFormatStrategy(new DataFormat.JsonConverter());
+            systemAdministrator1.useStrategyToFormatData(ListHelper.getListOfServersAndContainers());
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
