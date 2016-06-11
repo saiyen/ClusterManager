@@ -5,8 +5,8 @@
  */
 package API.Commands;
 
-import java.util.HashMap;
 import java.util.Map;
+import API.Interfaces.Command;
 import API.Json.JsonCreator;
 import API.Sender.CommandSender;
 import org.json.simple.JSONObject;
@@ -15,28 +15,15 @@ import org.json.simple.JSONObject;
  *
  * @author absentium
  */
-public class CreateContainer {
-    private String image;
-    private String name;
-    private String cType;
-    private String destination;
+public class Create implements Command {
     
-    public CreateContainer(String name, String cType, String destination, String image){
-        this.name = name;
-        this.cType = cType;
-        this.destination = destination;
-        this.image = image;
+    public Create(){
+        
     }
-    
-    public String createIt(){
-        Map<String,String> createMap = new HashMap<>();
-        
-        createMap.put("name", name);
-        createMap.put("image", image);
-        createMap.put("cType", cType);
-        createMap.put("destination", destination);
-        
-        JsonCreator creator = new JsonCreator(createMap);
+
+    @Override
+    public String execute(Map data) {
+        JsonCreator creator = new JsonCreator(data);
         JSONObject createdJson = creator.createJson();
         
         CommandSender sender = new CommandSender(createdJson);

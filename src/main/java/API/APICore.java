@@ -8,6 +8,10 @@ package API;
 import API.Commands.*;
 import static spark.Spark.*;
 import API.Cors.CorsFilter;
+import API.Factory.CommandFactory;
+import API.Interfaces.Command;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -17,6 +21,7 @@ public class APICore {
     public void requests(){
         CorsFilter.apply();
         
+        CommandFactory commandFactory = new CommandFactory();
         
         get("/serverList", (req,res) -> {
             GetServers getS = new GetServers();
@@ -26,50 +31,89 @@ public class APICore {
         
         // Start or stop a specific container
         post("/start", (req, res) -> {
-            StartContainer start = new StartContainer(req.queryParams("name"), req.queryParams("cId"), req.queryParams("cType"));
+            Command start = commandFactory.getCommand("start");
             
-            String result = start.startIt();
+            Map<String, String> data = new HashMap<>();
+            
+            data.put("name", req.queryParams("name"));
+            data.put("cId", req.queryParams("cId"));
+            data.put("cType", req.queryParams("cType"));
+            
+            String result = start.execute(data);
             
             return result;
         });
         post("/stop", (req, res) -> {
-            StopContainer stop = new StopContainer(req.queryParams("name"), req.queryParams("cId"), req.queryParams("cType"));
+            Command stop = commandFactory.getCommand("stop");
             
-            String result = stop.stopIt();
+            Map<String, String> data = new HashMap<>();
+            
+            data.put("name", req.queryParams("name"));
+            data.put("cId", req.queryParams("cId"));
+            data.put("cType", req.queryParams("cType"));
+            
+            String result = stop.execute(data);
             
             return result;
         });
         
         // Update a specific container
         post("/rename", (req, res) -> {
-            RenameContainer rename = new RenameContainer(req.queryParams("name"), req.queryParams("cId"), req.queryParams("cType"), req.queryParams("extra"));
+            Command rename = commandFactory.getCommand("rename");
             
-            String result = rename.sendName();
+            Map<String, String> data = new HashMap<>();
+        
+            data.put("name", req.queryParams("name"));
+            data.put("cType", req.queryParams("cType"));
+            data.put("cId", req.queryParams("cId"));
+            data.put("newName", req.queryParams("newName"));
+            
+            String result = rename.execute(data);
             
             return result;
         });
         get("/move", (req, res) -> {
-            MoveContainer move = new MoveContainer(req.queryParams("name"), req.queryParams("cId"), req.queryParams("cType"), req.queryParams("destination"));
+            Command move = commandFactory.getCommand("move");
             
-            String result = move.moveIt();
+            Map<String,String> data = new HashMap<>();
+        
+            data.put("name", req.queryParams("name"));
+            data.put("cId", req.queryParams("cId"));
+            data.put("cType", req.queryParams("cType"));
+            data.put("destination", req.queryParams("destination"));
+            
+            String result = move.execute(data);
             
             return result;
         });
         
         // Remove a specific container
         post("/remove", (req, res) -> {
-            RemoveContainer remove = new RemoveContainer(req.queryParams("name"), req.queryParams("cId"), req.queryParams("cType"));
+            Command remove = commandFactory.getCommand("remove");
             
-            String result = remove.removeIt();
+            Map<String, String> data = new HashMap<>();
+        
+            data.put("name", req.queryParams("name"));
+            data.put("cId", req.queryParams("cId"));
+            data.put("cType", req.queryParams("cType"));
+            
+            String result = remove.execute(data);
             
             return result;
         });
         
         // Create a new container on a specific server
         post("/create", (req, res) -> {
-            CreateContainer create = new CreateContainer(req.queryParams("name"), req.queryParams("cType"), req.queryParams("destination"), req.queryParams("image"));
+            Command create = commandFactory.getCommand("create");
             
-            String result = create.createIt();
+            Map<String,String> data = new HashMap<>();
+        
+            data.put("name", req.queryParams("name"));
+            data.put("image", req.queryParams("image"));
+            data.put("cType", req.queryParams("cType"));
+            data.put("destination", req.queryParams("destination"));
+            
+            String result = create.execute(data);
             
             return result;
         });

@@ -5,8 +5,8 @@
  */
 package API.Commands;
 
-import java.util.HashMap;
 import java.util.Map;
+import API.Interfaces.Command;
 import API.Json.JsonCreator;
 import API.Sender.CommandSender;
 import org.json.simple.JSONObject;
@@ -15,28 +15,15 @@ import org.json.simple.JSONObject;
  *
  * @author absentium
  */
-public class RenameContainer {
-    private String name;
-    private String cId;
-    private String cType;
-    private String newName;
+public class Rename implements Command {
     
-    public RenameContainer(String name, String cId, String cType, String newName){
-        this.name = name;
-        this.cId = cId;
-        this.cType = cType;
-        this.newName = newName;
+    public Rename(){
+        
     }
-    
-    public String sendName(){
-        Map<String, String> renameMap = new HashMap<>();
-        
-        renameMap.put("name", name);
-        renameMap.put("cType", cType);
-        renameMap.put("cId", cId);
-        renameMap.put("newName", newName);
-        
-        JsonCreator creator = new JsonCreator(renameMap);
+
+    @Override
+    public String execute(Map data) {
+        JsonCreator creator = new JsonCreator(data);
         JSONObject createdJson = creator.createJson();
         
         CommandSender sender = new CommandSender(createdJson);
