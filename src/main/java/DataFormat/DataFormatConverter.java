@@ -6,15 +6,15 @@ import Interfaces.DataFormatType;
 
 public class DataFormatConverter {
 
-    private DataFormatType strategy;
+    private DataFormatType formatType;
 
     //this can be set at runtime by the application preferences
-    public void setDataFormatStrategy(DataFormatType strategy) {
-        this.strategy = strategy;
+    public DataFormatConverter(DataFormatType formatType) {
+        this.formatType = formatType;
     }
 
-    //use the strategy
+    //use the strategy to execute the specified Data Format
     public void useStrategyToFormatData(List<ServerModel> servers) {
-        strategy.convertToDataFormat(servers);
+        formatType.convertToDataFormat(servers);
     }
 }

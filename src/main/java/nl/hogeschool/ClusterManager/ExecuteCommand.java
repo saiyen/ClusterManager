@@ -12,17 +12,12 @@ import net.schmizz.sshj.transport.TransportException;
 public class ExecuteCommand {   
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     
-    //Overload
     public static InputStream execute(String server_ip, String command) throws IOException, InterruptedException {
         SSHClient currentHost = SSHConnection.getListOfClients().get(server_ip);
-        return execute(server_ip, command, currentHost);
-    }
-    
-    public static InputStream execute(String server_ip, String command, SSHClient client) throws IOException, InterruptedException {
         InputStream inputStreamOfCommand = null;
          
         try {
-            Session session = client.startSession();
+            Session session = currentHost.startSession();
             
             if(session == null) {
                 LOGGER.warning("Can not create session for host: " + server_ip);
@@ -35,7 +30,7 @@ public class ExecuteCommand {
                     LOGGER.warning(e.getMessage());
                 } finally {
                     Thread.sleep(1000);
-                    session.close();
+                    currentHost.close();
                     LOGGER.info("Session closed;");
                 }
             } 

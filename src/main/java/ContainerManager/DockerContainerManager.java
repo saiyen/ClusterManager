@@ -5,6 +5,8 @@ import Models.ContainerModel;
 import nl.hogeschool.ClusterManager.ExecuteCommand;
 import Connection.SFTPConnection;
 import Connection.SSHConnection;
+import DataFormat.DataFormatConverter;
+import DataFormat.JsonConverter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -15,11 +17,11 @@ import java.util.logging.Logger;
 import net.schmizz.sshj.SSHClient;
 import Interfaces.ContainerManager;
 import nl.hogeschool.ClusterManager.ListHelper;
-import nl.hogeschool.ClusterManager.SystemAdministrator;
 import nl.hogeschool.ClusterManager.Tools;
 import org.json.simple.JSONObject;
 
 public class DockerContainerManager implements ContainerManager {
+
     private JSONObject apiData;
     private List<ServerModel> listOfServersWithContainers = null;
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -28,7 +30,7 @@ public class DockerContainerManager implements ContainerManager {
     public void setJson(JSONObject data) {
         apiData = data;
     }
-    
+
     @Override
     public int startContainer() throws IOException {
         try {
@@ -38,7 +40,7 @@ public class DockerContainerManager implements ContainerManager {
             updateJsonFile();
             return 1;
         } catch (InterruptedException ex) {
-            LOGGER.warning("Can't receive container id or server ip from the API: "+ex.getMessage());
+            LOGGER.warning("Can't receive container id or server ip from the API: " + ex.getMessage());
             return 0;
         }
     }
@@ -46,7 +48,7 @@ public class DockerContainerManager implements ContainerManager {
     @Override
     public int stopContainer() throws IOException {
         try {
-            String container_id = apiData.get("cId").toString(); 
+            String container_id = apiData.get("cId").toString();
             String server_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
             ExecuteCommand.execute(server_ip, "docker stop " + container_id);
             updateJsonFile();
@@ -56,7 +58,7 @@ public class DockerContainerManager implements ContainerManager {
             return 0;
         }
     }
-    
+
     @Override
     public int removeContainer() throws IOException {
         try {
@@ -79,19 +81,19 @@ public class DockerContainerManager implements ContainerManager {
             String destination_ip = apiData.get("destination").toString();
             String oldContainerLocation;
             String newContainerLocation;
-                    
-            if(Tools.searchInConnections(home_ip) == null){
+
+            if (Tools.searchInConnections(home_ip) == null) {
                 LOGGER.warning("Can not find the server");
                 return 0;
             } else {
-                oldContainerLocation = Tools.searchInConnections(home_ip).getUploadPath().concat(container_id +".tar");
+                oldContainerLocation = Tools.searchInConnections(home_ip).getUploadPath().concat(container_id + ".tar");
             }
-            
-            if(Tools.searchInConnections(destination_ip) == null){
+
+            if (Tools.searchInConnections(destination_ip) == null) {
                 LOGGER.warning("Can not find the server");
                 return 0;
             } else {
-                newContainerLocation = Tools.searchInConnections(destination_ip).getUploadPath().concat(container_id +".tar");
+                newContainerLocation = Tools.searchInConnections(destination_ip).getUploadPath().concat(container_id + ".tar");
             }
 
             SFTPConnection sftpTransfer = new SFTPConnection();
@@ -101,8 +103,8 @@ public class DockerContainerManager implements ContainerManager {
             sftpTransfer.downloadFile(home_ip, container_id);
             sftpTransfer.uploadFile(destination_ip, container_id);
             ExecuteCommand.execute(destination_ip, "cat " + newContainerLocation + " | docker import - " + container_id + ":latest");
-            ExecuteCommand.execute(destination_ip, "docker run "+container_id + ":latest "+getServerAndContainerInfoByContainerID(container_id).get("command"));
-            
+            ExecuteCommand.execute(destination_ip, "docker run " + container_id + ":latest " + getServerAndContainerInfoByContainerID(container_id).get("command"));
+
             updateJsonFile();
             return 1;
         } catch (Exception e) {
@@ -110,12 +112,12 @@ public class DockerContainerManager implements ContainerManager {
             return 0;
         }
     }
-    
+
     @Override
     public int createContainer() throws IOException {
         String destination_ip = apiData.get("destination").toString();
         String image = apiData.get("image").toString();
-        try { 
+        try {
             ExecuteCommand.execute(destination_ip, "docker run " + image);
             updateJsonFile();
             return 1;
@@ -124,14 +126,14 @@ public class DockerContainerManager implements ContainerManager {
             return 0;
         }
     }
-    
+
     @Override
-    public int renameContainer() throws IOException{
+    public int renameContainer() throws IOException {
         String container_id = apiData.get("cId").toString();
         String server_ip = getServerAndContainerInfoByContainerID(container_id).get("ip");
         String newName = apiData.get("newName").toString();
-        try { 
-            ExecuteCommand.execute(server_ip, "docker rename "+container_id+" "+newName);
+        try {
+            ExecuteCommand.execute(server_ip, "docker rename " + container_id + " " + newName);
             updateJsonFile();
             return 1;
         } catch (InterruptedException ex) {
@@ -147,7 +149,7 @@ public class DockerContainerManager implements ContainerManager {
         for (Entry<String, SSHClient> client : listOfClients.entrySet()) {
             String tempServerIP = client.getKey();
             InputStream resultOfExecute = ExecuteCommand.execute(tempServerIP, "docker ps -a");
-            ListHelper.addOutputToList(resultOfExecute, tempServerIP,"Docker");
+            ListHelper.addOutputToList(resultOfExecute, tempServerIP, "Docker");
         }
     }
 
@@ -158,7 +160,7 @@ public class DockerContainerManager implements ContainerManager {
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
         }
-      
+
         HashMap<String, String> containerElements = new HashMap();
         for (ServerModel server : listOfServersWithContainers) {
             for (ContainerModel theContainer : server.getContainers()) {
@@ -172,17 +174,18 @@ public class DockerContainerManager implements ContainerManager {
         }
         return containerElements;
     }
-    
+
     private void updateJsonFile() {
         try {
+            DataFormatConverter dataFormatConverter = new DataFormatConverter(new JsonConverter());
+            dataFormatConverter.useStrategyToFormatData(ListHelper.getListOfServersAndContainers());
+
             ListHelper.getListOfServersAndContainers().clear();
-            SystemAdministrator systemAdministrator1 = new SystemAdministrator("Docker");
-            systemAdministrator1.containerManager.getAllContainers();
-            systemAdministrator1.setDataFormatStrategy(new DataFormat.JsonConverter());
-            systemAdministrator1.useStrategyToFormatData(ListHelper.getListOfServersAndContainers());
+            getAllContainers();
+            dataFormatConverter.useStrategyToFormatData(ListHelper.getListOfServersAndContainers());
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
         }
-        
+
     }
 }

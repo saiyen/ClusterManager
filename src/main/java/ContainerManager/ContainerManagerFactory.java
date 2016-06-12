@@ -9,8 +9,7 @@ public class ContainerManagerFactory {
         ContainerManager containerManager = null;
         switch (containerManagerType) {
             case "Docker":
-                containerManager = new DockerContainerManager();
-                break;
+                return new DockerContainerManager();
         }
         return containerManager;
     }

@@ -5,10 +5,11 @@
  */
 package API.Sender;
 
+import ContainerManager.ContainerManagerFactory;
+import Interfaces.ContainerManager;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nl.hogeschool.ClusterManager.SystemAdministrator;
 import org.json.simple.JSONObject;
 
 /**
@@ -24,26 +25,28 @@ public class CommandSender {
     
     public int sendData(){
         try {
-            SystemAdministrator sysAdmin = new SystemAdministrator(commandData.get("cType").toString());
-            sysAdmin.containerManager.setJson(commandData);
+            ContainerManagerFactory containerManagerFactory = new ContainerManagerFactory();
+            ContainerManager containerManager = containerManagerFactory.getContainerManager(commandData.get("cType").toString());
+
+            containerManager.setJson(commandData);
             switch(commandData.get("name").toString()){
                 case "start":
-                    sysAdmin.containerManager.startContainer();
+                    containerManager.startContainer();
                     break;
                 case "stop":
-                    sysAdmin.containerManager.stopContainer();
+                    containerManager.stopContainer();
                     break;
                 case "rename":
-                    sysAdmin.containerManager.renameContainer();
+                    containerManager.renameContainer();
                     break;
                 case "move":
-                    sysAdmin.containerManager.moveContainer();
+                    containerManager.moveContainer();
                     break;
                 case "create":
-                    sysAdmin.containerManager.createContainer();
+                    containerManager.createContainer();
                     break; 
                 case "remove":
-                    sysAdmin.containerManager.removeContainer();
+                    containerManager.removeContainer();
                     break;
             }
             
